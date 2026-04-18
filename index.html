@@ -298,7 +298,37 @@ input.name-input{width:100%;border:1px solid var(--border);border-radius:10px;pa
 #toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--brown);color:var(--gold3);padding:10px 20px;border-radius:20px;font-size:12px;font-weight:600;opacity:0;transition:opacity .3s;z-index:5000;pointer-events:none;white-space:nowrap;}
 #toast.show{opacity:1;}
 
-/* PC responsive */
+/* Party screen */
+.party-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;}
+.party-start-btn{background:var(--brown);color:var(--gold3);border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;}
+.party-active-header{background:var(--brown2);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.party-end-btn{background:var(--gold);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;}
+.party-card{background:#fff;border:2px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .2s;}
+.party-card.checked{border-color:#639922;background:#F1FAF1;}
+.party-card:active{opacity:.8;}
+.party-card-body{padding:8px 10px 10px;}
+.party-check-badge{display:none;position:absolute;top:6px;right:6px;background:#639922;color:#fff;border-radius:50%;width:22px;height:22px;font-size:12px;align-items:center;justify-content:center;font-weight:700;}
+.party-card.checked .party-check-badge{display:flex;}
+.party-card-wrap{position:relative;}
+.party-history-card{background:#fff;border:1px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden;cursor:pointer;}
+.phc-header{background:var(--brown2);padding:11px 14px;display:flex;align-items:center;gap:10px;}
+.phc-date{font-size:10px;color:var(--gold2);}
+.phc-name{font-size:14px;font-weight:700;color:var(--gold3);}
+.phc-body{padding:10px 14px;}
+.phc-stats{display:flex;gap:14px;}
+.phc-stat{text-align:center;}
+.phc-stat-num{font-size:18px;font-weight:700;color:var(--brown);}
+.phc-stat-label{font-size:8px;color:#B89A70;}
+.phc-sake-list{margin-top:8px;display:flex;flex-wrap:wrap;gap:4px;}
+.phc-sake-chip{font-size:10px;background:var(--cream2);border:1px solid var(--border);border-radius:10px;padding:2px 8px;color:var(--brown3);}
+.party-summary-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:10px;}
+.psc-name{font-size:12px;font-weight:700;color:var(--brown);flex:1;}
+.psc-stars{display:flex;gap:3px;}
+.psc-star{background:none;border:none;font-size:22px;cursor:pointer;color:var(--cream3);line-height:1;padding:0;}
+.psc-star.lit{color:var(--gold);}
+.member-select-chip{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;border:2px solid var(--border);background:#fff;cursor:pointer;font-size:12px;color:var(--brown3);}
+.member-select-chip.selected{border-color:var(--gold);background:var(--cream2);color:var(--brown);font-weight:700;}
+
 @media(min-width:768px){
   .sake-grid{grid-template-columns:repeat(3,1fr);}
 }
@@ -401,6 +431,9 @@ input.name-input{width:100%;border:1px solid var(--border);border-radius:10px;pa
         <div class="sb-nav-item" onclick="showScreen('stats',this)">
           <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 11V7M5 11V4M8 11V6M11 11V2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>統計
         </div>
+        <div class="sb-nav-item" onclick="showScreen('party',this)">
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.5"/><path d="M5 7l1.5 1.5L9.5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>飲み会
+        </div>
       </div>
       <div class="sb-members">
         <div class="sb-members-title">メンバー</div>
@@ -458,6 +491,61 @@ input.name-input{width:100%;border:1px solid var(--border);border-radius:10px;pa
           <div class="rank-list" id="member-rank-list"></div>
         </div>
       </div>
+
+      <!-- PARTY -->
+      <div id="screen-party" class="screen">
+        <div class="party-content" id="party-content">
+          <!-- 飲み会モード中 or 通常 -->
+          <div id="party-normal-view">
+            <div style="padding:14px 14px 8px;display:flex;justify-content:space-between;align-items:center;">
+              <div style="font-size:14px;font-weight:700;color:var(--brown);">🍻 飲み会</div>
+              <button class="party-start-btn" onclick="startPartySetup()">＋ 飲み会をスタート</button>
+            </div>
+            <div id="party-history-list" style="padding:0 14px;"></div>
+          </div>
+          <!-- 飲み会セットアップ -->
+          <div id="party-setup-view" style="display:none;padding:14px;">
+            <div style="font-size:14px;font-weight:700;color:var(--brown);margin-bottom:14px;">🍻 新しい飲み会</div>
+            <div style="font-size:10px;color:var(--brown3);margin-bottom:5px;">飲み会の名前</div>
+            <input id="party-name-input" class="shop-input" placeholder="例：第5回日本酒会" style="margin-bottom:10px;">
+            <div style="font-size:10px;color:var(--brown3);margin-bottom:5px;">日付</div>
+            <input id="party-date-input" type="date" class="shop-input" style="margin-bottom:12px;">
+            <div style="font-size:10px;color:var(--brown3);margin-bottom:8px;">参加メンバー</div>
+            <div id="party-member-select" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;"></div>
+            <button class="save-btn" onclick="startPartyMode()">🍶 スタート！</button>
+            <button class="close-btn" onclick="cancelPartySetup()">キャンセル</button>
+          </div>
+          <!-- 飲み会モード中 -->
+          <div id="party-active-view" style="display:none;">
+            <div class="party-active-header">
+              <div>
+                <div style="font-size:11px;color:var(--gold2);" id="party-active-name"></div>
+                <div style="font-size:13px;font-weight:700;color:var(--gold3);" id="party-active-count">0本チェック済み</div>
+              </div>
+              <button class="party-end-btn" onclick="endPartyMode()">終了する</button>
+            </div>
+            <div style="padding:8px 14px;display:flex;gap:6px;overflow-x:auto;" id="party-cat-tabs">
+              <div class="cat-tab all active-cat" onclick="setPartyCatFilter('all',this)">全て</div>
+              <div class="cat-tab t1" onclick="setPartyCatFilter('t1',this)">🍯 M.E</div>
+              <div class="cat-tab t2" onclick="setPartyCatFilter('t2',this)">💜 M.S</div>
+              <div class="cat-tab t3" onclick="setPartyCatFilter('t3',this)">🌿 C.R</div>
+              <div class="cat-tab t4" onclick="setPartyCatFilter('t4',this)">💙 C.M</div>
+            </div>
+            <div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 14px 14px;">
+              <div id="party-sake-grid" class="sake-grid"></div>
+            </div>
+          </div>
+          <!-- 飲み会終了サマリー -->
+          <div id="party-summary-view" style="display:none;padding:14px;">
+            <div style="font-size:14px;font-weight:700;color:var(--brown);margin-bottom:4px;" id="summary-title"></div>
+            <div style="font-size:11px;color:#B89A70;margin-bottom:14px;" id="summary-subtitle"></div>
+            <div style="font-size:11px;font-weight:700;color:var(--brown3);margin-bottom:8px;">今夜チェックした銘柄 — 評価をつけよう！</div>
+            <div id="party-summary-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;"></div>
+            <button class="save-btn" onclick="savePartyAndFinish()">💾 保存して完了</button>
+            <button class="close-btn" onclick="skipPartyRating()">評価なしで完了</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Right panel PC -->
@@ -476,6 +564,7 @@ input.name-input{width:100%;border:1px solid var(--border);border-radius:10px;pa
     <div class="bn-items">
       <button class="bn-item active" onclick="showScreen('home',this)"><div class="bn-icon">🏠</div><div class="bn-label">ホーム</div></button>
       <button class="bn-item" onclick="showScreen('list',this)"><div class="bn-icon">📋</div><div class="bn-label">一覧</div></button>
+      <button class="bn-item" onclick="showScreen('party',this)"><div class="bn-icon">🍻</div><div class="bn-label">飲み会</div></button>
       <button class="bn-item" onclick="showScreen('members',this)"><div class="bn-icon">👥</div><div class="bn-label">メンバー</div></button>
       <button class="bn-item" onclick="showScreen('stats',this)"><div class="bn-icon">📊</div><div class="bn-label">統計</div></button>
     </div>
@@ -526,6 +615,22 @@ input.name-input{width:100%;border:1px solid var(--border);border-radius:10px;pa
     <input class="name-input" id="am-new-name" placeholder="名前を入力（例：やまだ）">
     <button class="save-btn" onclick="saveNewMember()" style="margin-top:12px;">追加する</button>
     <button class="close-btn" onclick="closeAddMember()">キャンセル</button>
+  </div>
+</div>
+
+<!-- Party Detail Modal -->
+<div id="party-detail-modal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(44,26,14,.6);" onclick="if(event.target===this)this.style.display='none';">
+  <div style="background:var(--cream);border-radius:20px 20px 0 0;width:100%;max-width:540px;max-height:88vh;overflow-y:auto;padding:0 0 24px;position:absolute;bottom:0;left:50%;transform:translateX(-50%);">
+    <div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:12px auto;"></div>
+    <div style="background:var(--brown);padding:14px 20px;margin-top:6px;">
+      <div style="font-size:10px;color:var(--gold2);margin-bottom:3px;" id="pdm-date"></div>
+      <div style="font-size:18px;font-weight:700;color:var(--gold3);" id="pdm-title"></div>
+    </div>
+    <div style="padding:14px;">
+      <div style="font-size:10px;color:#B89A70;margin-bottom:12px;" id="pdm-date-members"></div>
+      <div id="pdm-list"></div>
+      <button style="width:100%;background:var(--cream3);color:var(--brown3);border:none;border-radius:12px;padding:10px;font-size:13px;cursor:pointer;margin-top:4px;" onclick="document.getElementById('party-detail-modal').style.display='none'">閉じる</button>
+    </div>
   </div>
 </div>
 
@@ -993,6 +1098,7 @@ function showScreen(name,el){
   if(name==='list')renderList();
   if(name==='members')renderMembersScreen();
   if(name==='stats')renderStats();
+  if(name==='party')renderPartyScreen();
 }
 
 // ============================================================
@@ -1008,6 +1114,7 @@ function renderAll(){
   if(screenId==='screen-list')renderList();
   if(screenId==='screen-members')renderMembersScreen();
   if(screenId==='screen-stats')renderStats();
+  if(screenId==='screen-party')renderPartyScreen();
 }
 
 function updateHeader(){
@@ -1311,6 +1418,220 @@ async function deleteMember(id){
   }catch(e){alert('削除エラー: '+e.message);}
 }
 document.getElementById('add-member-modal').addEventListener('click',function(e){if(e.target===this)closeAddMember();});
+
+// ============================================================
+// ============================================================
+// 飲み会モード
+// ============================================================
+let parties=[];
+let currentParty=null;
+let partyChecked={};
+let partySummaryRatings={};
+let partyCatFilter='all';
+let partyParticipants=[];
+
+async function loadParties(){
+  try{const rows=await sbFetch('parties?select=*&order=date.desc,created_at.desc');parties=rows;}
+  catch(e){console.error('loadParties:',e);}
+}
+async function loadPartyDetails(partyId){
+  try{
+    const[mRows,rRows]=await Promise.all([
+      sbFetch('party_members?select=*&party_id=eq.'+partyId),
+      sbFetch('party_records?select=*&party_id=eq.'+partyId),
+    ]);
+    return{members:mRows,records:rRows};
+  }catch(e){return{members:[],records:[]};}
+}
+function formatDate(dateStr){
+  const d=new Date(dateStr+'T00:00:00');
+  return`${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;
+}
+function showPartyNormalView(){
+  ['party-normal-view','party-setup-view','party-active-view','party-summary-view'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.style.display=id==='party-normal-view'?'block':'none';
+  });
+}
+async function renderPartyScreen(){
+  await loadParties();
+  showPartyNormalView();
+  renderPartyHistory();
+}
+function renderPartyHistory(){
+  const el=document.getElementById('party-history-list');
+  if(!el)return;
+  if(parties.length===0){
+    el.innerHTML=`<div style="text-align:center;padding:40px 20px;color:#B89A70;font-size:13px;">まだ飲み会の記録がありません<br><br>「飲み会をスタート」から始めましょう！🍶</div>`;
+    return;
+  }
+  el.innerHTML=parties.map(p=>`
+    <div class="party-history-card" onclick="openPartyDetail('${p.id}')">
+      <div class="phc-header">
+        <div><div class="phc-date">${formatDate(p.date)}</div><div class="phc-name">${p.name}</div></div>
+        <div style="margin-left:auto;font-size:10px;color:var(--gold2);">詳細 ›</div>
+      </div>
+      <div class="phc-body" id="phc-body-${p.id}"><div style="font-size:10px;color:#B89A70;padding:8px 0;">読込中...</div></div>
+    </div>`).join('');
+  parties.forEach(p=>loadPartyCardDetail(p.id));
+}
+async function loadPartyCardDetail(partyId){
+  const el=document.getElementById('phc-body-'+partyId);if(!el)return;
+  const{members:mRows,records:rRows}=await loadPartyDetails(partyId);
+  const sakeNos=[...new Set(rRows.map(r=>r.sake_no))];
+  const memberNames=mRows.map(m=>{const mem=members.find(x=>x.id===m.member_id);return mem?mem.name:'';}).filter(Boolean);
+  const ratedRows=rRows.filter(r=>r.rating>0);
+  const avgRating=ratedRows.length?(ratedRows.reduce((a,r)=>a+r.rating,0)/ratedRows.length).toFixed(1):'-';
+  const sakeChips=sakeNos.slice(0,5).map(no=>{const s=SAKE_DATA.find(x=>x.no===no);return s?`<span class="phc-sake-chip">${s.name}</span>`:''}).join('');
+  const more=sakeNos.length>5?`<span class="phc-sake-chip">+${sakeNos.length-5}本</span>`:'';
+  el.innerHTML=`
+    <div class="phc-stats">
+      <div class="phc-stat"><div class="phc-stat-num">${sakeNos.length}</div><div class="phc-stat-label">銘柄</div></div>
+      <div class="phc-stat"><div class="phc-stat-num">${avgRating}★</div><div class="phc-stat-label">平均評価</div></div>
+      <div class="phc-stat"><div class="phc-stat-num">${memberNames.length}人</div><div class="phc-stat-label">参加</div></div>
+    </div>
+    <div style="font-size:9px;color:#B89A70;margin-top:5px;">${memberNames.join('・')}</div>
+    <div class="phc-sake-list">${sakeChips}${more}</div>`;
+}
+async function openPartyDetail(partyId){
+  const party=parties.find(p=>p.id===partyId);if(!party)return;
+  const{members:mRows,records:rRows}=await loadPartyDetails(partyId);
+  const sakeNos=[...new Set(rRows.map(r=>r.sake_no))];
+  const memberNames=mRows.map(m=>{const mem=members.find(x=>x.id===m.member_id);return mem?mem.name:'';}).filter(Boolean);
+  document.getElementById('pdm-title').textContent=party.name;
+  document.getElementById('pdm-date').textContent=formatDate(party.date);
+  document.getElementById('pdm-date-members').textContent='参加：'+memberNames.join('・');
+  document.getElementById('pdm-list').innerHTML=sakeNos.map(no=>{
+    const s=SAKE_DATA.find(x=>x.no===no);if(!s)return'';
+    const myRec=rRows.find(r=>r.sake_no===no&&r.member_id===currentUserId);
+    const rating=myRec?.rating||0;
+    const checkers=rRows.filter(r=>r.sake_no===no).map(r=>{const mem=members.find(x=>x.id===r.member_id);return mem?mem.name:'';}).filter(Boolean);
+    return`<div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:9px 12px;display:flex;align-items:center;gap:10px;margin-bottom:7px;">
+      <div style="flex:1;">
+        <div style="font-size:12px;font-weight:700;color:var(--brown);">No.${String(no).padStart(3,'0')} ${s.name}</div>
+        <div style="font-size:9px;color:#B89A70;">📍${s.pref} · ${checkers.join('・')}</div>
+      </div>
+      <div style="font-size:11px;color:var(--gold);">${rating?starsHTML(rating):'未評価'}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('party-detail-modal').style.display='flex';
+}
+function startPartySetup(){
+  document.getElementById('party-date-input').value=new Date().toISOString().split('T')[0];
+  document.getElementById('party-name-input').value='';
+  partyParticipants=[currentUserId];
+  document.getElementById('party-member-select').innerHTML=members.map(m=>`
+    <div class="member-select-chip ${m.id===currentUserId?'selected':''}" id="pms-${m.id}" onclick="togglePartyMember('${m.id}')">
+      ${avatarSvg(m.avatar_id,22)} ${m.name}
+    </div>`).join('');
+  document.getElementById('party-normal-view').style.display='none';
+  document.getElementById('party-setup-view').style.display='block';
+}
+function togglePartyMember(id){
+  if(id===currentUserId)return;
+  if(partyParticipants.includes(id))partyParticipants=partyParticipants.filter(x=>x!==id);
+  else partyParticipants.push(id);
+  document.querySelectorAll('[id^="pms-"]').forEach(el=>{
+    el.classList.toggle('selected',partyParticipants.includes(el.id.replace('pms-','')));
+  });
+}
+function cancelPartySetup(){
+  document.getElementById('party-setup-view').style.display='none';
+  document.getElementById('party-normal-view').style.display='block';
+}
+function startPartyMode(){
+  const name=document.getElementById('party-name-input').value.trim()||'飲み会';
+  const date=document.getElementById('party-date-input').value||new Date().toISOString().split('T')[0];
+  currentParty={id:'party_'+Date.now(),name,date,created_by:currentUserId};
+  partyChecked={};partySummaryRatings={};partyCatFilter='all';
+  document.getElementById('party-setup-view').style.display='none';
+  const av=document.getElementById('party-active-view');
+  av.style.display='flex';av.style.flexDirection='column';
+  document.getElementById('party-active-name').textContent=name+' · '+formatDate(date);
+  updatePartyCount();
+  renderPartySakeGrid();
+}
+function setPartyCatFilter(cat,btn){
+  partyCatFilter=cat;
+  document.querySelectorAll('#party-cat-tabs .cat-tab').forEach(b=>b.classList.remove('active-cat'));
+  if(btn)btn.classList.add('active-cat');
+  renderPartySakeGrid();
+}
+function renderPartySakeGrid(){
+  let sakes=SAKE_DATA;
+  if(partyCatFilter!=='all')sakes=sakes.filter(s=>getCat(s.no)===partyCatFilter);
+  document.getElementById('party-sake-grid').innerHTML=sakes.map(s=>{
+    const checked=partyChecked[s.no]||false;
+    return`<div class="party-card-wrap">
+      <div class="party-card ${checked?'checked':''}" id="pc-${s.no}" onclick="togglePartyCheck(${s.no})">
+        <div class="sake-card-noimg"><div class="sc-desc" style="font-size:8px;color:var(--brown3);">${s.pref}</div></div>
+        <div class="party-card-body">
+          <span class="sc-cat ${getCat(s.no)}">${CAT_INFO[getCat(s.no)].label}</span>
+          <div class="sc-num">No.${String(s.no).padStart(3,'0')}</div>
+          <div class="sc-name" style="font-size:11px;">${s.name}</div>
+        </div>
+        <div class="party-check-badge">✓</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function togglePartyCheck(no){
+  partyChecked[no]=!partyChecked[no];
+  document.getElementById('pc-'+no)?.classList.toggle('checked',partyChecked[no]);
+  updatePartyCount();
+}
+function updatePartyCount(){
+  const cnt=Object.values(partyChecked).filter(Boolean).length;
+  document.getElementById('party-active-count').textContent=cnt+'本チェック済み';
+}
+function endPartyMode(){
+  const checkedNos=Object.entries(partyChecked).filter(([,v])=>v).map(([k])=>parseInt(k));
+  if(checkedNos.length===0){
+    if(confirm('まだ何もチェックしていません。キャンセルしますか？')){currentParty=null;showPartyNormalView();renderPartyHistory();}
+    return;
+  }
+  document.getElementById('party-active-view').style.display='none';
+  document.getElementById('party-summary-view').style.display='block';
+  document.getElementById('summary-title').textContent='🎉 お疲れ様でした！';
+  document.getElementById('summary-subtitle').textContent=currentParty.name+' · '+checkedNos.length+'本チェック！評価をつけよう（任意）';
+  checkedNos.forEach(no=>{partySummaryRatings[no]=0;});
+  document.getElementById('party-summary-list').innerHTML=checkedNos.map(no=>{
+    const s=SAKE_DATA.find(x=>x.no===no);if(!s)return'';
+    return`<div class="party-summary-card">
+      <div style="flex:1;"><div class="psc-name">${s.name}</div><div style="font-size:9px;color:#B89A70;">📍${s.pref}</div></div>
+      <div class="psc-stars">${[1,2,3,4,5].map(n=>`<button class="psc-star" onclick="setPartyStar(${no},${n})" id="psc-${no}-${n}">★</button>`).join('')}</div>
+    </div>`;
+  }).join('');
+}
+function setPartyStar(no,n){
+  partySummaryRatings[no]=partySummaryRatings[no]===n?0:n;
+  [1,2,3,4,5].forEach(i=>{const b=document.getElementById(`psc-${no}-${i}`);if(b)b.className='psc-star'+(partySummaryRatings[no]>=i?' lit':'');});
+}
+async function savePartyAndFinish(){
+  if(!currentParty)return;
+  const checkedNos=Object.entries(partyChecked).filter(([,v])=>v).map(([k])=>parseInt(k));
+  try{
+    await sbFetch('parties',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify(currentParty)});
+    for(const mid of partyParticipants){
+      await sbFetch('party_members',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify({party_id:currentParty.id,member_id:mid})});
+    }
+    for(const no of checkedNos){
+      await sbFetch('party_records',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify({party_id:currentParty.id,sake_no:no,member_id:currentUserId,rating:partySummaryRatings[no]||0})});
+      const r=getRecord(no);
+      r.checked[currentUserId]=true;
+      if(partySummaryRatings[no]>0)r.rating=partySummaryRatings[no];
+      records[no]=r;
+      await upsertRecord(no);
+    }
+    showToast('🎉 飲み会を記録しました！');
+  }catch(e){console.error('saveParty:',e);showToast('❌ 保存に失敗しました');}
+  currentParty=null;
+  document.getElementById('party-summary-view').style.display='none';
+  showPartyNormalView();
+  await renderPartyScreen();
+  renderAll();
+}
+async function skipPartyRating(){partySummaryRatings={};await savePartyAndFinish();}
 
 // ============================================================
 // Pull to Refresh
