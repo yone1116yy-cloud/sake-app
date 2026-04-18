@@ -64,20 +64,20 @@ input.us-name-input{width:100%;border:1px solid var(--border);border-radius:10px
 #app{display:none;height:100%;flex-direction:column;overflow:hidden;}
 
 /* Header */
-.app-header{background:var(--brown);padding:10px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0;}
-.hdr-logo{font-size:15px;font-weight:700;color:var(--gold3);letter-spacing:.06em;}
-.hdr-prog{flex:1;}
-.hdr-prog-bar{background:rgba(255,255,255,.15);border-radius:3px;height:4px;margin-top:3px;}
+.app-header{background:var(--brown);padding:8px 12px;display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.hdr-logo{font-size:13px;font-weight:700;color:var(--gold3);letter-spacing:.04em;white-space:nowrap;flex-shrink:0;}
+.hdr-prog{flex:1;min-width:0;}
+.hdr-prog-bar{background:rgba(255,255,255,.15);border-radius:3px;height:4px;margin-top:2px;}
 .hdr-prog-fill{background:var(--gold);height:4px;border-radius:3px;transition:width .5s;}
-.hdr-prog-txt{font-size:9px;color:var(--gold2);text-align:right;margin-top:2px;}
+.hdr-prog-txt{font-size:8px;color:var(--gold2);text-align:right;margin-top:1px;}
 .sync-indicator{display:flex;align-items:center;gap:4px;font-size:9px;color:#B89A70;}
 .sync-dot{width:5px;height:5px;border-radius:50%;}
 .sync-dot.ok{background:#639922;}
 .sync-dot.ng{background:#D85A30;}
 .sync-dot.wait{background:var(--gold);animation:pulse 1s infinite;}
-.hdr-user-btn{display:flex;align-items:center;gap:6px;background:rgba(245,230,200,.12);border-radius:8px;padding:5px 9px;cursor:pointer;border:none;margin-left:auto;}
-.hdr-user-av{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
-.hdr-user-name{font-size:10px;color:var(--gold3);font-weight:700;max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.hdr-user-btn{display:flex;align-items:center;gap:5px;background:rgba(245,230,200,.12);border-radius:7px;padding:4px 8px;cursor:pointer;border:none;flex-shrink:0;}
+.hdr-user-av{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.hdr-user-name{font-size:10px;color:var(--gold3);font-weight:700;max-width:52px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
 /* Body layout */
 .app-body{display:flex;flex:1;overflow:hidden;}
@@ -132,19 +132,19 @@ input.us-name-input{width:100%;border:1px solid var(--border);border-radius:10px
 .screen.active{display:flex;flex-direction:column;}
 
 /* ===== HOME SCREEN ===== */
-.home-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 14px;}
-.member-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;-webkit-overflow-scrolling:touch;}
+.home-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:8px 12px;}
+.member-row{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:8px;-webkit-overflow-scrolling:touch;}
 .member-row::-webkit-scrollbar{display:none;}
-.m-chip{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--border);border-radius:20px;padding:5px 10px 5px 6px;flex-shrink:0;}
+.m-chip{display:flex;align-items:center;gap:5px;background:#fff;border:1px solid var(--border);border-radius:16px;padding:4px 8px 4px 5px;flex-shrink:0;}
 .m-chip.me{border-color:var(--gold);background:var(--cream2);}
-.m-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
-.m-name{font-size:11px;font-weight:700;color:var(--brown);}
-.m-cnt{font-size:9px;color:#B89A70;}
+.m-av{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.m-name{font-size:10px;font-weight:700;color:var(--brown);}
+.m-cnt{font-size:8px;color:#B89A70;}
 
 /* Category tabs */
-.cat-tabs{display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;-webkit-overflow-scrolling:touch;}
+.cat-tabs{display:flex;gap:4px;overflow-x:auto;padding-bottom:4px;margin-bottom:8px;-webkit-overflow-scrolling:touch;}
 .cat-tabs::-webkit-scrollbar{display:none;}
-.cat-tab{padding:5px 10px;border-radius:16px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid transparent;white-space:nowrap;flex-shrink:0;transition:all .15s;}
+.cat-tab{padding:4px 8px;border-radius:12px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid transparent;white-space:nowrap;flex-shrink:0;transition:all .15s;}
 .cat-tab.all{background:var(--brown);color:var(--gold3);}
 .cat-tab.t1{background:#FFF0D9;color:#8B4A0E;border-color:#E8C89A;}
 .cat-tab.t2{background:#F0EDF8;color:#534AB7;border-color:#C9C4EE;}
@@ -407,7 +407,7 @@ input.name-input{width:100%;border:1px solid var(--border);border-radius:10px;pa
       <div class="hdr-prog-bar"><div class="hdr-prog-fill" id="hdr-prog-fill" style="width:0%"></div></div>
       <div class="hdr-prog-txt" id="hdr-prog-txt">0 / 130</div>
     </div>
-    <div class="sync-indicator"><div class="sync-dot wait" id="sync-dot"></div><span id="sync-label">接続中</span></div>
+    <div class="sync-indicator"><div class="sync-dot wait" id="sync-dot" title="接続状態"></div></div>
     <button class="hdr-user-btn" id="hdr-user-btn" onclick="switchUserPrompt()">
       <div class="hdr-user-av" id="hdr-user-av"></div>
       <div class="hdr-user-name" id="hdr-user-name"></div>
@@ -879,8 +879,8 @@ const starsHTML=n=>'★'.repeat(n)+'☆'.repeat(5-n);
 const getMemberDrunkCount=mid=>SAKE_DATA.filter(s=>getRecord(s.no).checked[mid]).length;
 
 function setSyncStatus(type,msg){
-  document.getElementById('sync-dot').className='sync-dot '+type;
-  document.getElementById('sync-label').textContent=msg;
+  const dot=document.getElementById('sync-dot');
+  if(dot){dot.className='sync-dot '+type;dot.title=msg;}
 }
 function showToast(msg){
   const t=document.getElementById('toast');
@@ -1255,7 +1255,11 @@ function renderMembersScreen(){
       <div class="mc-header">
         <div class="mc-avatar">${avatarSvg(m.avatar_id,42)}</div>
         <div style="flex:1;"><div class="mc-name">${m.name}${isMe?' 👈':''}</div><span class="mc-badge">${title.title}</span></div>
-        ${isMe?`<button style="background:rgba(255,255,255,.1);border:none;color:#B89A70;font-size:10px;padding:3px 7px;border-radius:6px;cursor:pointer;" onclick="deleteMember('${m.id}')">削除</button>`:''}
+        ${isMe?`
+          <div style="display:flex;gap:4px;">
+            <button style="background:rgba(255,200,100,.2);border:none;color:#FFCC66;font-size:10px;padding:3px 7px;border-radius:6px;cursor:pointer;" onclick="resetMyRecords('${m.id}')">初期化</button>
+            <button style="background:rgba(255,255,255,.1);border:none;color:#B89A70;font-size:10px;padding:3px 7px;border-radius:6px;cursor:pointer;" onclick="deleteMember('${m.id}')">削除</button>
+          </div>`:''}
       </div>
       <div class="mc-stats">
         <div class="mc-stat"><div class="mc-stat-num">${cnt}</div><div class="mc-stat-label">飲んだ本数</div></div>
@@ -1402,6 +1406,25 @@ async function saveNewMember(){
     renderMembersScreen();
     showToast('メンバーを追加しました！');
   }catch(e){alert('追加エラー: '+e.message);}
+}
+async function resetMyRecords(id){
+  if(id!==currentUserId){alert('自分の記録しか初期化できません');return;}
+  if(!confirm('⚠️ 自分の飲んだ記録・評価・メモを全てクリアします。\nこの操作は取り消せません。よろしいですか？'))return;
+  if(!confirm('本当に初期化しますか？\n（評価・タグ・メモも含め全て削除されます）'))return;
+  try{
+    // recordsテーブルから自分のデータを削除
+    await sbFetch('records?member_id=eq.'+id,{method:'DELETE',headers:{'Prefer':'return=minimal'}});
+    // ローカルのrecordsも更新（自分のチェックのみ除去）
+    for(const no in records){
+      if(records[no].checked&&records[no].checked[id]){
+        delete records[no].checked[id];
+      }
+    }
+    showToast('✅ 記録を初期化しました');
+    await loadAllData();
+    renderAll();
+    renderMembersScreen();
+  }catch(e){alert('初期化エラー: '+e.message);}
 }
 async function deleteMember(id){
   if(id!==currentUserId){alert('自分のアカウントしか削除できません');return;}
