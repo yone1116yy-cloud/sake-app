@@ -2,128 +2,149 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>🍶 日本酒会チェッカー</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 :root{
   --brown:#2C1A0E;--brown2:#3D2010;--brown3:#5C3A1E;
   --gold:#C17F3B;--gold2:#D4A96A;--gold3:#F5E6C8;
   --cream:#FDF6EE;--cream2:#FFF8EE;--cream3:#F0E5D5;
   --border:#E8D5B5;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
+html,body{height:100%;overflow:hidden;}
 body{font-family:'Hiragino Kaku Gothic ProN','Yu Gothic',sans-serif;background:var(--cream);color:var(--brown);}
 
 /* ===== SPLASH ===== */
-#splash{position:fixed;inset:0;background:var(--brown);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity 0.8s;}
+#splash{position:fixed;inset:0;background:var(--brown);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .8s;}
 #splash.hide{opacity:0;pointer-events:none;}
-.sp-ring{position:absolute;border-radius:50%;border:1px solid rgba(245,230,200,0.07);}
+.sp-ring{position:absolute;border-radius:50%;border:1px solid rgba(245,230,200,.07);}
 .sp-content{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:14px;}
 .sp-title{font-size:28px;font-weight:700;color:var(--gold3);letter-spacing:.12em;text-align:center;line-height:1.3;}
 .sp-sub{font-size:11px;color:#B89A70;letter-spacing:.25em;}
 .sp-dots{display:flex;gap:8px;margin-top:12px;}
 .sp-dot{width:8px;height:8px;border-radius:50%;background:#B89A70;animation:pulse 1.2s ease-in-out infinite;}
-.sp-dot:nth-child(2){animation-delay:.2s;}
-.sp-dot:nth-child(3){animation-delay:.4s;}
+.sp-dot:nth-child(2){animation-delay:.2s;}.sp-dot:nth-child(3){animation-delay:.4s;}
 @keyframes pulse{0%,100%{opacity:.3;transform:scale(.8);}50%{opacity:1;transform:scale(1);}}
+
+/* ===== ERROR SCREEN ===== */
+#error-screen{display:none;position:fixed;inset:0;background:var(--brown);z-index:9000;align-items:center;justify-content:center;padding:24px;}
+#error-screen.show{display:flex;}
+.err-box{background:var(--gold3);border-radius:20px;padding:32px;max-width:360px;width:100%;text-align:center;}
+.err-icon{font-size:48px;margin-bottom:16px;}
+.err-title{font-size:18px;font-weight:700;color:#C0392B;margin-bottom:10px;}
+.err-msg{font-size:13px;color:var(--brown3);line-height:1.7;}
+.err-retry{margin-top:20px;background:var(--brown);color:var(--gold3);border:none;border-radius:12px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer;}
 
 /* ===== USER SELECT ===== */
 #user-select{display:none;position:fixed;inset:0;background:var(--brown);z-index:8000;align-items:center;justify-content:center;padding:20px;overflow-y:auto;}
 #user-select.show{display:flex;}
-.us-box{background:var(--gold3);border-radius:20px;padding:28px;max-width:680px;width:100%;}
+.us-box{background:var(--gold3);border-radius:20px;padding:24px;max-width:480px;width:100%;}
 .us-title{font-size:18px;font-weight:700;color:var(--brown);margin-bottom:4px;}
-.us-sub{font-size:12px;color:var(--brown3);margin-bottom:20px;}
-.us-members{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
-.us-member{border:2px solid var(--border);border-radius:16px;padding:12px 16px;background:#fff;cursor:pointer;display:flex;align-items:center;gap:10px;transition:border-color .2s;}
-.us-member:hover,.us-member.selected{border-color:var(--gold);}
-.us-member.selected{background:var(--cream2);}
-.us-m-name{font-size:14px;font-weight:700;color:var(--brown);}
-.us-new-toggle{border:2px dashed var(--border);border-radius:16px;padding:12px 16px;background:transparent;cursor:pointer;display:flex;align-items:center;gap:10px;font-size:13px;color:#B89A70;width:100%;}
-.us-new-form{display:none;border-top:1px solid var(--border);padding-top:16px;margin-top:12px;}
-.us-av-title{font-size:12px;font-weight:700;color:var(--brown3);margin-bottom:10px;}
-.us-av-groups{display:flex;gap:16px;flex-wrap:wrap;}
-.us-av-group{min-width:180px;}
+.us-sub{font-size:12px;color:var(--brown3);margin-bottom:16px;}
+.us-members{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+.us-member{border:2px solid var(--border);border-radius:14px;padding:12px 16px;background:#fff;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .2s;}
+.us-member:hover,.us-member.selected{border-color:var(--gold);background:var(--cream2);}
+.us-m-name{font-size:15px;font-weight:700;color:var(--brown);}
+.us-m-title{font-size:11px;color:#B89A70;}
+.us-new-toggle{border:2px dashed var(--border);border-radius:14px;padding:12px 16px;background:transparent;cursor:pointer;display:flex;align-items:center;gap:10px;font-size:13px;color:#B89A70;width:100%;margin-bottom:12px;}
+.us-new-form{display:none;border-top:1px solid var(--border);padding-top:14px;}
+.us-av-groups{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;}
+.us-av-group{flex:1;min-width:140px;}
 .us-av-group-label{font-size:10px;font-weight:700;color:var(--gold);margin-bottom:6px;}
-.us-av-row{display:flex;gap:6px;flex-wrap:wrap;}
-.av-btn{width:52px;height:52px;border-radius:50%;border:2px solid var(--border);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color .2s;}
-.av-btn:hover,.av-btn.sel{border-color:var(--gold);box-shadow:0 0 0 3px rgba(193,127,59,.2);}
-input.us-name-input{width:100%;border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-size:14px;background:#fff;font-family:inherit;outline:none;margin-top:12px;}
-.us-start-btn{width:100%;background:var(--brown);color:var(--gold3);border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;margin-top:16px;letter-spacing:.06em;}
-.us-start-btn:disabled{opacity:.5;cursor:not-allowed;}
+.us-av-row{display:flex;gap:5px;flex-wrap:wrap;}
+.av-btn{width:48px;height:48px;border-radius:50%;border:2px solid var(--border);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color .2s;}
+.av-btn.sel{border-color:var(--gold);box-shadow:0 0 0 3px rgba(193,127,59,.2);}
+input.us-name-input{width:100%;border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-size:14px;background:#fff;font-family:inherit;outline:none;margin-top:10px;}
+.us-start-btn{width:100%;background:var(--brown);color:var(--gold3);border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;margin-top:14px;letter-spacing:.06em;}
+.us-start-btn:disabled{opacity:.4;cursor:not-allowed;}
 
-/* ===== APP ===== */
-#app{display:none;height:100vh;flex-direction:column;overflow:hidden;}
+/* ===== APP SHELL ===== */
+#app{display:none;height:100%;flex-direction:column;overflow:hidden;}
 
 /* Header */
-.app-header{background:var(--brown);padding:10px 20px;display:flex;align-items:center;gap:16px;flex-shrink:0;position:relative;overflow:hidden;}
-.app-header::after{content:'';position:absolute;top:-40px;right:-30px;width:100px;height:100px;border-radius:50%;border:1px solid rgba(245,230,200,.07);}
-.hdr-logo{font-size:15px;font-weight:700;color:var(--gold3);letter-spacing:.06em;white-space:nowrap;}
-.hdr-prog{flex:1;max-width:280px;}
-.hdr-prog-label{font-size:9px;color:#B89A70;margin-bottom:3px;}
-.hdr-prog-bar{background:rgba(255,255,255,.12);border-radius:3px;height:5px;}
-.hdr-prog-fill{background:var(--gold);height:5px;border-radius:3px;transition:width .5s;}
+.app-header{background:var(--brown);padding:10px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.hdr-logo{font-size:15px;font-weight:700;color:var(--gold3);letter-spacing:.06em;}
+.hdr-prog{flex:1;}
+.hdr-prog-bar{background:rgba(255,255,255,.15);border-radius:3px;height:4px;margin-top:3px;}
+.hdr-prog-fill{background:var(--gold);height:4px;border-radius:3px;transition:width .5s;}
 .hdr-prog-txt{font-size:9px;color:var(--gold2);text-align:right;margin-top:2px;}
-.hdr-sync{font-size:10px;color:#B89A70;display:flex;align-items:center;gap:4px;white-space:nowrap;}
-.sync-dot{width:6px;height:6px;border-radius:50%;}
+.sync-indicator{display:flex;align-items:center;gap:4px;font-size:9px;color:#B89A70;}
+.sync-dot{width:5px;height:5px;border-radius:50%;}
 .sync-dot.ok{background:#639922;}
 .sync-dot.ng{background:#D85A30;}
 .sync-dot.wait{background:var(--gold);animation:pulse 1s infinite;}
-.hdr-user{display:flex;align-items:center;gap:6px;background:rgba(245,230,200,.12);border-radius:8px;padding:4px 10px;margin-left:auto;cursor:pointer;}
-.hdr-user-av{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
-.hdr-user-name{font-size:11px;color:var(--gold3);font-weight:700;}
-.hdr-btn{background:rgba(245,230,200,.12);border:none;border-radius:7px;color:var(--gold3);font-size:10px;padding:4px 9px;cursor:pointer;white-space:nowrap;}
+.hdr-user-btn{display:flex;align-items:center;gap:6px;background:rgba(245,230,200,.12);border-radius:8px;padding:5px 9px;cursor:pointer;border:none;margin-left:auto;}
+.hdr-user-av{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.hdr-user-name{font-size:10px;color:var(--gold3);font-weight:700;max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
-/* 3カラム */
+/* Body layout */
 .app-body{display:flex;flex:1;overflow:hidden;}
 
-/* Sidebar */
-.sidebar{width:200px;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;}
-.sb-user{padding:16px;border-bottom:1px solid var(--cream3);text-align:center;}
-.sb-avatar{width:64px;height:64px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;border:2px solid var(--gold);}
-.sb-name{font-size:14px;font-weight:700;color:var(--brown);}
-.sb-badge{font-size:10px;background:var(--gold);color:#fff;padding:2px 8px;border-radius:8px;display:inline-block;margin-top:3px;}
-.sb-comment{font-size:9px;color:#B89A70;margin-top:4px;line-height:1.4;}
-.sb-stats{display:flex;justify-content:center;gap:16px;margin-top:8px;}
+/* PC Sidebar */
+.sidebar{width:190px;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;}
+.sb-user{padding:14px;border-bottom:1px solid var(--cream3);text-align:center;}
+.sb-avatar{width:60px;height:60px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;border:2px solid var(--gold);}
+.sb-name{font-size:13px;font-weight:700;color:var(--brown);}
+.sb-badge{font-size:9px;background:var(--gold);color:#fff;padding:2px 7px;border-radius:8px;display:inline-block;margin-top:3px;}
+.sb-comment{font-size:8px;color:#B89A70;margin-top:3px;line-height:1.4;}
+.sb-stats{display:flex;justify-content:center;gap:14px;margin-top:8px;}
 .sb-stat{text-align:center;}
-.sb-stat-num{font-size:17px;font-weight:700;color:var(--brown);}
-.sb-stat-label{font-size:9px;color:#B89A70;}
-.sb-nav{padding:8px 0;}
-.sb-nav-item{display:flex;align-items:center;gap:10px;padding:10px 18px;font-size:12px;color:var(--brown3);cursor:pointer;border-left:3px solid transparent;transition:all .15s;}
+.sb-stat-num{font-size:16px;font-weight:700;color:var(--brown);}
+.sb-stat-label{font-size:8px;color:#B89A70;}
+.sb-nav{padding:6px 0;}
+.sb-nav-item{display:flex;align-items:center;gap:9px;padding:10px 16px;font-size:12px;color:var(--brown3);cursor:pointer;border-left:3px solid transparent;transition:all .15s;}
 .sb-nav-item:hover{background:var(--cream2);}
 .sb-nav-item.active{background:var(--cream2);font-weight:700;color:var(--brown);border-left-color:var(--gold);}
-.sb-members{padding:12px 16px;border-top:1px solid var(--cream3);margin-top:auto;}
-.sb-members-title{font-size:10px;color:#B89A70;margin-bottom:8px;}
-.sb-m-chip{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:8px;cursor:pointer;border:1px solid transparent;margin-bottom:4px;}
+.sb-members{padding:10px 14px;border-top:1px solid var(--cream3);margin-top:auto;}
+.sb-members-title{font-size:9px;color:#B89A70;margin-bottom:7px;}
+.sb-m-chip{display:flex;align-items:center;gap:7px;padding:5px 7px;border-radius:7px;cursor:pointer;border:1px solid transparent;margin-bottom:3px;}
 .sb-m-chip:hover{background:var(--cream2);}
 .sb-m-chip.active-user{background:var(--cream2);border-color:var(--gold);}
-.sb-m-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
-.sb-m-name{font-size:11px;font-weight:600;color:var(--brown);}
-.sb-m-cnt{font-size:9px;color:#B89A70;}
+.sb-m-av{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.sb-m-name{font-size:10px;font-weight:600;color:var(--brown);}
+.sb-m-cnt{font-size:8px;color:#B89A70;}
 
-/* Main */
-.main-content{flex:1;overflow-y:auto;padding:16px 20px;}
+/* Main content */
+.main-content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;}
 
-/* Right panel */
-.right-panel{width:220px;border-left:1px solid var(--border);background:var(--cream);overflow-y:auto;padding:14px;flex-shrink:0;}
-.rp-title{font-size:11px;font-weight:700;color:var(--brown3);letter-spacing:.06em;margin-bottom:8px;}
-.rp-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px;}
-.rp-stat{background:#fff;border:1px solid var(--border);border-radius:8px;padding:8px;text-align:center;}
-.rp-stat-num{font-size:14px;font-weight:700;color:var(--brown);}
-.rp-stat-label{font-size:8px;color:#B89A70;margin-top:1px;}
-.rp-rank-list{background:#fff;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:14px;}
-.rp-rank-row{display:flex;align-items:center;gap:7px;padding:7px 10px;border-bottom:1px solid var(--cream3);}
+/* Pull to refresh */
+.ptr-indicator{text-align:center;padding:8px;font-size:11px;color:#B89A70;display:none;}
+.ptr-indicator.show{display:block;}
+
+/* Right panel PC */
+.right-panel{width:210px;border-left:1px solid var(--border);background:var(--cream);overflow-y:auto;padding:12px;flex-shrink:0;}
+.rp-title{font-size:10px;font-weight:700;color:var(--brown3);letter-spacing:.06em;margin-bottom:7px;}
+.rp-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:12px;}
+.rp-stat{background:#fff;border:1px solid var(--border);border-radius:7px;padding:7px;text-align:center;}
+.rp-stat-num{font-size:13px;font-weight:700;color:var(--brown);}
+.rp-stat-label{font-size:7px;color:#B89A70;margin-top:1px;}
+.rp-rank-list{background:#fff;border:1px solid var(--border);border-radius:7px;overflow:hidden;margin-bottom:12px;}
+.rp-rank-row{display:flex;align-items:center;gap:6px;padding:6px 9px;border-bottom:1px solid var(--cream3);}
 .rp-rank-row:last-child{border-bottom:none;}
-.rp-medal{width:18px;font-size:12px;}
-.rp-rname{flex:1;color:var(--brown);font-weight:600;font-size:10px;line-height:1.3;}
-.rp-rcnt{color:#B89A70;font-size:9px;white-space:nowrap;}
+.rp-medal{width:16px;font-size:11px;}
+.rp-rname{flex:1;color:var(--brown);font-weight:600;font-size:9px;line-height:1.3;}
+.rp-rcnt{color:#B89A70;font-size:8px;white-space:nowrap;}
 
 /* Screens */
-.screen{display:none;}
-.screen.active{display:block;}
+.screen{display:none;height:100%;}
+.screen.active{display:flex;flex-direction:column;}
+
+/* ===== HOME SCREEN ===== */
+.home-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 14px;}
+.member-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;-webkit-overflow-scrolling:touch;}
+.member-row::-webkit-scrollbar{display:none;}
+.m-chip{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--border);border-radius:20px;padding:5px 10px 5px 6px;flex-shrink:0;}
+.m-chip.me{border-color:var(--gold);background:var(--cream2);}
+.m-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.m-name{font-size:11px;font-weight:700;color:var(--brown);}
+.m-cnt{font-size:9px;color:#B89A70;}
 
 /* Category tabs */
-.cat-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
-.cat-tab{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid transparent;transition:all .15s;}
+.cat-tabs{display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;-webkit-overflow-scrolling:touch;}
+.cat-tabs::-webkit-scrollbar{display:none;}
+.cat-tab{padding:5px 10px;border-radius:16px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid transparent;white-space:nowrap;flex-shrink:0;transition:all .15s;}
 .cat-tab.all{background:var(--brown);color:var(--gold3);}
 .cat-tab.t1{background:#FFF0D9;color:#8B4A0E;border-color:#E8C89A;}
 .cat-tab.t2{background:#F0EDF8;color:#534AB7;border-color:#C9C4EE;}
@@ -132,147 +153,166 @@ input.us-name-input{width:100%;border:1px solid var(--border);border-radius:10px
 .cat-tab.active-cat{box-shadow:0 0 0 2px currentColor;}
 .cat-tab.all.active-cat{box-shadow:0 0 0 2px var(--brown);}
 
-/* Member row */
-.member-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
-.m-chip{display:flex;align-items:center;gap:7px;background:#fff;border:1px solid var(--border);border-radius:24px;padding:5px 12px 5px 7px;}
-.m-chip.me{border-color:var(--gold);background:var(--cream2);}
-.m-av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
-.m-name{font-size:11px;font-weight:700;color:var(--brown);}
-.m-cnt{font-size:9px;color:#B89A70;}
-
-/* Sake grid */
-.sake-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
-.sake-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:11px;cursor:pointer;transition:border-color .15s;}
-.sake-card:hover{border-color:var(--gold);}
-.sc-cat{font-size:8px;font-weight:700;padding:2px 6px;border-radius:4px;display:inline-block;margin-bottom:5px;}
+/* Sake grid - mobile first */
+.sake-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.sake-card{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .15s;active:opacity:.8;}
+.sake-card:active{opacity:.8;}
+.sake-card-img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;}
+.sake-card-info{padding:8px 10px 10px;}
+.sc-cat{font-size:7px;font-weight:700;padding:1px 5px;border-radius:3px;display:inline-block;margin-bottom:4px;}
 .sc-cat.t1{background:#FFF0D9;color:#8B4A0E;}
 .sc-cat.t2{background:#F0EDF8;color:#534AB7;}
 .sc-cat.t3{background:#E8F5E9;color:#2A5C2A;}
 .sc-cat.t4{background:#E3F2FD;color:#185FA5;}
-.sc-num{font-size:9px;color:#B89A70;}
-.sc-name{font-size:12px;font-weight:700;color:var(--brown);margin:2px 0 6px;line-height:1.3;}
-.sc-checks{display:flex;gap:3px;margin-bottom:4px;}
-.sc-dot{width:10px;height:10px;border-radius:50%;}
-.sc-stars{font-size:10px;color:var(--gold);}
+.sc-num{font-size:8px;color:#B89A70;}
+.sc-name{font-size:12px;font-weight:700;color:var(--brown);margin:2px 0 4px;line-height:1.3;}
+.sc-pref{font-size:9px;color:#B89A70;margin-bottom:4px;}
+.sc-checks{display:flex;gap:3px;margin-bottom:3px;}
+.sc-dot{width:9px;height:9px;border-radius:50%;}
+.sc-stars{font-size:9px;color:var(--gold);}
+/* 画像なし時：説明文エリア */
+.sake-card-noimg{padding:8px 10px 6px;background:linear-gradient(135deg,var(--cream2),var(--cream3));}
+.sc-desc{font-size:9px;color:var(--brown3);line-height:1.5;}
 
-/* Sake list (mobile) */
-.sake-list{display:none;}
-.sake-row-item{background:#fff;border-bottom:1px solid var(--cream3);padding:9px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;}
-.sr-num{font-size:10px;color:#B89A70;width:30px;flex-shrink:0;}
-.sr-info{flex:1;}
-.sr-name{font-size:13px;font-weight:600;color:var(--brown);}
-.sr-meta{font-size:9px;color:#B89A70;margin-top:1px;}
-.sr-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;}
-.sr-checks{display:flex;gap:2px;}
-.sr-dot{width:9px;height:9px;border-radius:50%;}
+/* List view */
+.sake-list-view{display:flex;flex-direction:column;}
+.sake-list-item{background:#fff;border-bottom:1px solid var(--cream3);padding:10px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;}
+.sake-list-item:active{background:var(--cream2);}
+.sli-num{font-size:9px;color:#B89A70;width:28px;flex-shrink:0;}
+.sli-info{flex:1;min-width:0;}
+.sli-name{font-size:13px;font-weight:600;color:var(--brown);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sli-sub{font-size:9px;color:#B89A70;margin-top:1px;}
+.sli-right{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;}
+.sli-checks{display:flex;gap:2px;}
+.sli-dot{width:8px;height:8px;border-radius:50%;}
+.sli-stars{font-size:9px;color:var(--gold);}
 
-/* List toolbar */
-.list-toolbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;align-items:center;}
-.filter-btn{border:1px solid var(--border);background:#fff;border-radius:20px;font-size:11px;color:var(--brown3);padding:4px 10px;cursor:pointer;}
+/* LIST SCREEN toolbar */
+.list-toolbar{display:flex;gap:5px;padding:10px 14px;background:var(--cream);border-bottom:1px solid var(--border);flex-wrap:wrap;align-items:center;flex-shrink:0;}
+.filter-btn{border:1px solid var(--border);background:#fff;border-radius:16px;font-size:10px;color:var(--brown3);padding:4px 9px;cursor:pointer;white-space:nowrap;}
 .filter-btn.active{background:var(--brown);color:var(--gold3);border-color:var(--brown);}
-.search-box{flex:1;min-width:120px;border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:11px;background:#fff;outline:none;}
+.search-box{flex:1;min-width:100px;border:1px solid var(--border);border-radius:16px;padding:5px 11px;font-size:11px;background:#fff;outline:none;}
 
-/* Members screen */
-.member-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;}
+/* MEMBERS screen */
+.members-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 14px;}
+.member-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;}
 .mc-card{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;}
 .mc-header{background:var(--brown2);padding:12px 14px;display:flex;align-items:center;gap:10px;}
-.mc-avatar{width:48px;height:48px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;background:var(--brown);}
-.mc-name{font-size:14px;font-weight:700;color:var(--gold3);}
+.mc-avatar{width:46px;height:46px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;background:var(--brown);flex-shrink:0;}
+.mc-name{font-size:13px;font-weight:700;color:var(--gold3);}
 .mc-badge{font-size:9px;background:var(--gold);color:#fff;padding:2px 7px;border-radius:6px;display:inline-block;margin-top:2px;}
 .mc-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border);}
-.mc-stat{background:#fff;padding:9px;text-align:center;}
-.mc-stat-num{font-size:16px;font-weight:700;color:var(--brown);}
+.mc-stat{background:#fff;padding:8px;text-align:center;}
+.mc-stat-num{font-size:15px;font-weight:700;color:var(--brown);}
 .mc-stat-label{font-size:8px;color:#B89A70;margin-top:1px;}
-.mc-prog{padding:10px 14px;}
-.mc-prog-bar{background:var(--cream3);border-radius:3px;height:5px;margin:4px 0;}
+.mc-prog{padding:9px 12px;}
+.mc-prog-bar{background:var(--cream3);border-radius:3px;height:5px;margin:3px 0;}
 .mc-prog-fill{background:var(--gold);height:5px;border-radius:3px;}
-.mc-prog-label{font-size:9px;color:#B89A70;}
-.add-member-btn{border:2px dashed var(--border);border-radius:14px;background:transparent;padding:20px;font-size:12px;color:#B89A70;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;width:100%;}
+.mc-prog-label{font-size:8px;color:#B89A70;}
+.add-member-btn{border:2px dashed var(--border);border-radius:14px;background:transparent;padding:18px;font-size:12px;color:#B89A70;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;width:100%;}
 
-/* Stats */
-.stats-grid-main{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:16px;}
-.stat-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;}
-.stat-card-num{font-size:22px;font-weight:700;color:var(--brown);}
-.stat-card-label{font-size:10px;color:#B89A70;margin-top:2px;}
-.rank-list{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px;}
-.rank-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--cream3);}
+/* STATS screen */
+.stats-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 14px;}
+.stats-grid-main{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-bottom:14px;}
+.stat-card{background:#fff;border:1px solid var(--border);border-radius:11px;padding:12px;text-align:center;}
+.stat-card-num{font-size:20px;font-weight:700;color:var(--brown);}
+.stat-card-label{font-size:9px;color:#B89A70;margin-top:2px;}
+.rank-list{background:#fff;border:1px solid var(--border);border-radius:11px;overflow:hidden;margin-bottom:14px;}
+.rank-row{display:flex;align-items:center;gap:9px;padding:9px 13px;border-bottom:1px solid var(--cream3);}
 .rank-row:last-child{border-bottom:none;}
-.rank-medal{font-size:14px;width:22px;}
-.rank-name{font-size:12px;font-weight:600;color:var(--brown);flex:1;}
-.rank-val{font-size:11px;color:var(--gold);}
-.rank-cnt{font-size:10px;color:#B89A70;}
+.rank-medal{font-size:13px;width:20px;}
+.rank-name{font-size:11px;font-weight:600;color:var(--brown);flex:1;}
+.rank-val{font-size:10px;color:var(--gold);}
+.rank-cnt{font-size:9px;color:#B89A70;}
 
-/* Bottom nav (mobile) */
-.bottom-nav{display:none;background:#fff;border-top:1px solid var(--border);padding:8px 0 12px;flex-shrink:0;}
-.bn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;border:none;background:none;}
-.bn-icon{font-size:18px;}
+/* Bottom nav */
+.bottom-nav{display:none;background:#fff;border-top:1px solid var(--border);flex-shrink:0;padding-bottom:var(--safe-bottom);}
+.bn-items{display:flex;}
+.bn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;border:none;background:none;padding:8px 0 10px;}
+.bn-icon{font-size:20px;}
 .bn-label{font-size:9px;color:#B89A70;}
 .bn-item.active .bn-label{color:var(--gold);font-weight:700;}
 
-/* Detail modal */
-#detail-modal{display:none;position:fixed;inset:0;z-index:1000;background:rgba(44,26,14,.6);}
-#detail-modal.open{display:flex;align-items:flex-end;justify-content:center;}
-.detail-sheet{background:var(--cream);border-radius:20px 20px 0 0;width:100%;max-width:540px;max-height:88vh;overflow-y:auto;padding:0 0 24px;}
-.detail-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 0;}
-.detail-hdr{background:var(--brown);padding:14px 20px;margin-top:8px;}
-.d-num{font-size:10px;color:#B89A70;margin-bottom:2px;}
-.d-name{font-size:20px;font-weight:700;color:var(--gold3);}
-.d-type{display:inline-block;font-size:10px;padding:2px 8px;border-radius:6px;margin-top:4px;}
-.detail-body{padding:16px;}
-.d-section{margin-bottom:16px;}
-.d-section-title{font-size:11px;font-weight:700;color:var(--brown3);letter-spacing:.06em;margin-bottom:8px;}
-.mcr-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--cream3);}
-.mcr-row:last-child{border-bottom:none;}
-.mcr-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--cream2);}
-.mcr-name{font-size:12px;font-weight:600;color:var(--brown);flex:1;}
-.mcr-toggle{border:none;cursor:pointer;padding:5px 14px;border-radius:8px;font-size:11px;transition:all .2s;}
-.mcr-toggle.yes{background:var(--brown);color:var(--gold3);}
-.mcr-toggle.no{background:var(--cream3);color:var(--brown3);}
-.mcr-toggle:disabled{opacity:.4;cursor:not-allowed;}
-.mcr-readonly{font-size:11px;color:#B89A70;padding:3px 8px;background:var(--cream3);border-radius:6px;}
-.star-row{display:flex;gap:4px;}
-.star-btn{background:none;border:none;font-size:28px;cursor:pointer;color:var(--cream3);transition:color .1s;line-height:1;}
+/* ===== QUICK MODAL (シンプル操作) ===== */
+#quick-modal{display:none;position:fixed;inset:0;z-index:1000;background:rgba(44,26,14,.55);}
+#quick-modal.open{display:flex;align-items:flex-end;justify-content:center;}
+.quick-sheet{background:var(--cream);border-radius:20px 20px 0 0;width:100%;max-width:540px;padding-bottom:calc(16px + var(--safe-bottom));}
+.qs-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:10px auto;}
+.qs-header{background:var(--brown);padding:12px 18px;margin-top:6px;}
+.qs-cat{font-size:9px;padding:2px 7px;border-radius:4px;display:inline-block;margin-bottom:3px;}
+.qs-cat.t1{background:#FFF0D9;color:#8B4A0E;}
+.qs-cat.t2{background:#F0EDF8;color:#534AB7;}
+.qs-cat.t3{background:#E8F5E9;color:#2A5C2A;}
+.qs-cat.t4{background:#E3F2FD;color:#185FA5;}
+.qs-num{font-size:9px;color:#B89A70;margin-bottom:2px;}
+.qs-name{font-size:18px;font-weight:700;color:var(--gold3);}
+.qs-pref{font-size:10px;color:var(--gold2);margin-top:2px;}
+.qs-body{padding:14px 18px;}
+
+/* 飲んだボタン */
+.qs-drunk-section{margin-bottom:16px;}
+.qs-section-title{font-size:10px;font-weight:700;color:var(--brown3);letter-spacing:.06em;margin-bottom:8px;}
+.drunk-big-btn{width:100%;padding:16px;border-radius:14px;font-size:16px;font-weight:700;border:2px solid transparent;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.drunk-big-btn.yes{background:var(--brown);color:var(--gold3);border-color:var(--brown);}
+.drunk-big-btn.no{background:var(--cream3);color:var(--brown3);border-color:var(--border);}
+
+/* 他のメンバーの飲んだ状況（参照のみ） */
+.other-members{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+.om-chip{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:10px;}
+.om-chip.drunk{background:rgba(44,26,14,.08);color:var(--brown);}
+.om-chip.not-drunk{background:var(--cream3);color:#B89A70;}
+
+/* 評価 */
+.qs-rating-section{margin-bottom:14px;}
+.star-row{display:flex;gap:6px;justify-content:center;}
+.star-btn{background:none;border:none;font-size:36px;cursor:pointer;color:var(--cream3);transition:all .15s;line-height:1;padding:0;}
 .star-btn.lit{color:var(--gold);}
-.tag-chips{display:flex;flex-wrap:wrap;gap:6px;}
-.tag-chip{background:#fff;border:1px solid var(--border);border-radius:16px;font-size:11px;color:var(--brown3);padding:4px 10px;cursor:pointer;}
+.star-btn:active{transform:scale(1.2);}
+
+/* 詳細折りたたみ */
+.qs-detail-toggle{width:100%;background:none;border:1px solid var(--border);border-radius:10px;padding:9px;font-size:12px;color:var(--brown3);cursor:pointer;margin-bottom:10px;}
+.qs-detail-section{display:none;}
+.qs-detail-section.open{display:block;}
+.tag-chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;}
+.tag-chip{background:#fff;border:1px solid var(--border);border-radius:14px;font-size:11px;color:var(--brown3);padding:4px 9px;cursor:pointer;}
 .tag-chip.selected{background:var(--brown);color:var(--gold3);border-color:var(--brown);}
-textarea.note-input{width:100%;border:1px solid var(--border);border-radius:10px;padding:8px 10px;font-size:12px;color:var(--brown);background:#fff;resize:none;height:64px;font-family:inherit;outline:none;}
-input.shop-input{width:100%;border:1px solid var(--border);border-radius:10px;padding:7px 10px;font-size:12px;color:var(--brown);background:#fff;font-family:inherit;outline:none;}
+textarea.note-input{width:100%;border:1px solid var(--border);border-radius:10px;padding:8px 10px;font-size:12px;color:var(--brown);background:#fff;resize:none;height:60px;font-family:inherit;outline:none;}
+input.shop-input{width:100%;border:1px solid var(--border);border-radius:10px;padding:7px 10px;font-size:12px;color:var(--brown);background:#fff;font-family:inherit;outline:none;margin-bottom:8px;}
+
 .save-btn{width:100%;background:var(--brown);color:var(--gold3);border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:.06em;}
 .close-btn{width:100%;background:var(--cream3);color:var(--brown3);border:none;border-radius:12px;padding:10px;font-size:13px;cursor:pointer;margin-top:8px;}
-.saving-msg{text-align:center;font-size:12px;color:var(--gold);margin-top:8px;min-height:18px;}
+.saving-msg{text-align:center;font-size:11px;color:var(--gold);margin-top:6px;min-height:16px;}
 
 /* Add member modal */
 #add-member-modal{display:none;position:fixed;inset:0;z-index:2000;background:rgba(44,26,14,.6);}
 #add-member-modal.open{display:flex;align-items:center;justify-content:center;padding:20px;}
-.am-box{background:var(--cream);border-radius:20px;padding:24px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;}
-.am-title{font-size:16px;font-weight:700;color:var(--brown);margin-bottom:16px;}
-.am-av-groups{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px;}
-.am-av-group{min-width:180px;}
-.am-av-group-label{font-size:10px;font-weight:700;color:var(--gold);margin-bottom:6px;}
-.am-av-row{display:flex;gap:6px;flex-wrap:wrap;}
-input.name-input{width:100%;border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-size:14px;background:#fff;margin-top:12px;font-family:inherit;outline:none;}
+.am-box{background:var(--cream);border-radius:20px;padding:22px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;}
+.am-title{font-size:16px;font-weight:700;color:var(--brown);margin-bottom:14px;}
+.am-av-groups{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;}
+.am-av-group{min-width:160px;}
+.am-av-group-label{font-size:10px;font-weight:700;color:var(--gold);margin-bottom:5px;}
+.am-av-row{display:flex;gap:5px;flex-wrap:wrap;}
+input.name-input{width:100%;border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-size:14px;background:#fff;margin-top:10px;font-family:inherit;outline:none;}
 
-/* Loading overlay */
-#loading-overlay{display:none;position:fixed;inset:0;background:rgba(44,26,14,.5);z-index:5000;align-items:center;justify-content:center;}
-#loading-overlay.show{display:flex;}
-.loading-box{background:var(--gold3);border-radius:16px;padding:24px 32px;text-align:center;}
-.loading-box p{font-size:13px;color:var(--brown);margin-top:8px;}
+/* Toast notification */
+#toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--brown);color:var(--gold3);padding:10px 20px;border-radius:20px;font-size:12px;font-weight:600;opacity:0;transition:opacity .3s;z-index:5000;pointer-events:none;white-space:nowrap;}
+#toast.show{opacity:1;}
 
-/* Responsive */
-@media(max-width:900px){
-  .sidebar,.right-panel{display:none;}
-  .main-content{padding:12px 14px;}
-  .bottom-nav{display:flex;}
-  #app{overflow:visible;}
-  .app-body{overflow:visible;}
-  .sake-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));}
+/* PC responsive */
+@media(min-width:768px){
+  .sake-grid{grid-template-columns:repeat(3,1fr);}
 }
-@media(max-width:480px){
-  .sake-grid{display:none;}
-  .sake-list{display:block;}
-  .cat-tabs{gap:4px;}
-  .cat-tab{font-size:10px;padding:4px 8px;}
+@media(min-width:900px){
+  .sidebar{display:flex;}
+  .right-panel{display:block;}
+  .bottom-nav{display:none !important;}
+  .main-content{display:flex;flex-direction:column;}
+  .sake-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));}
+}
+@media(max-width:899px){
+  .sidebar,.right-panel{display:none;}
+  .bottom-nav{display:block;}
+  html,body{overflow:hidden;}
 }
 </style>
 </head>
@@ -281,19 +321,17 @@ input.name-input{width:100%;border:1px solid var(--border);border-radius:10px;pa
 <!-- Splash -->
 <div id="splash">
   <div style="position:absolute;inset:0;">
-    <div class="sp-ring" style="width:300px;height:300px;top:50%;left:50%;transform:translate(-50%,-50%);"></div>
-    <div class="sp-ring" style="width:500px;height:500px;top:50%;left:50%;transform:translate(-50%,-50%);"></div>
-    <div class="sp-ring" style="width:700px;height:700px;top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+    <div class="sp-ring" style="width:280px;height:280px;top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+    <div class="sp-ring" style="width:480px;height:480px;top:50%;left:50%;transform:translate(-50%,-50%);"></div>
   </div>
   <div class="sp-content">
-    <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+    <svg width="72" height="72" viewBox="0 0 80 80" fill="none">
       <rect x="30" y="5" width="20" height="12" rx="5" fill="#C17F3B"/>
       <rect x="25" y="15" width="30" height="5" rx="2.5" fill="#D4A96A"/>
       <path d="M20 22 Q15 36 15 54 Q15 70 40 70 Q65 70 65 54 Q65 36 60 22 Z" fill="#F5E6C8"/>
-      <path d="M20 22 Q15 36 15 54 Q15 70 40 70 Q65 70 65 54 Q65 36 60 22 Z" fill="#C17F3B" opacity="0.25"/>
+      <path d="M20 22 Q15 36 15 54 Q15 70 40 70 Q65 70 65 54 Q65 36 60 22 Z" fill="#C17F3B" opacity="0.2"/>
       <rect x="27" y="34" width="26" height="2" rx="1" fill="#C17F3B" opacity="0.5"/>
-      <rect x="27" y="40" width="26" height="2" rx="1" fill="#C17F3B" opacity="0.5"/>
-      <rect x="27" y="46" width="18" height="2" rx="1" fill="#C17F3B" opacity="0.35"/>
+      <rect x="27" y="42" width="26" height="2" rx="1" fill="#C17F3B" opacity="0.5"/>
     </svg>
     <div class="sp-title">🍶 日本酒会<br>チェッカー</div>
     <div class="sp-sub">NIHONSHU CHECKER</div>
@@ -301,18 +339,29 @@ input.name-input{width:100%;border:1px solid var(--border);border-radius:10px;pa
   </div>
 </div>
 
-<!-- Loading -->
-<div id="loading-overlay"><div class="loading-box"><div style="font-size:28px;">🍶</div><p id="loading-msg">処理中...</p></div></div>
+<!-- Error Screen -->
+<div id="error-screen">
+  <div class="err-box">
+    <div class="err-icon">😴</div>
+    <div class="err-title">サービスが停止しています</div>
+    <div class="err-msg">
+      サーバーへの接続に失敗しました。<br><br>
+      長期間アクセスがなかった場合、<br>サービスが自動停止していることがあります。<br><br>
+      <strong>管理者（よねやまさん）に連絡して<br>再開してもらってください。</strong>
+    </div>
+    <button class="err-retry" onclick="location.reload()">🔄 再試行</button>
+  </div>
+</div>
 
 <!-- User Select -->
 <div id="user-select">
   <div class="us-box">
     <div class="us-title">👋 あなたは誰ですか？</div>
-    <div class="us-sub">メンバーを選んでください</div>
+    <div class="us-sub">メンバーを選んでください（次回から自動ログイン）</div>
     <div class="us-members" id="us-members-list"></div>
     <button class="us-new-toggle" onclick="toggleNewForm()">＋ 新しいメンバーとして登録</button>
     <div class="us-new-form" id="us-new-form">
-      <div class="us-av-title">アバターを選んでね！</div>
+      <div style="font-size:11px;font-weight:700;color:var(--brown3);margin-bottom:8px;">アバターを選んでね！</div>
       <div class="us-av-groups" id="us-av-groups"></div>
       <input class="us-name-input" id="us-new-name" placeholder="名前を入力（例：よねやま）">
     </div>
@@ -323,90 +372,95 @@ input.name-input{width:100%;border:1px solid var(--border);border-radius:10px;pa
 <!-- App -->
 <div id="app">
   <div class="app-header">
-    <div class="hdr-logo">🍶 日本酒会チェッカー</div>
+    <div class="hdr-logo">🍶 日本酒会</div>
     <div class="hdr-prog">
-      <div class="hdr-prog-label">みんなの制覇率</div>
       <div class="hdr-prog-bar"><div class="hdr-prog-fill" id="hdr-prog-fill" style="width:0%"></div></div>
-      <div class="hdr-prog-txt" id="hdr-prog-txt">0 / 130 銘柄</div>
+      <div class="hdr-prog-txt" id="hdr-prog-txt">0 / 130</div>
     </div>
-    <div class="hdr-sync"><div class="sync-dot wait" id="sync-dot"></div><span id="sync-label">接続中...</span></div>
-    <div class="hdr-user" id="hdr-user" onclick="logout()">
+    <div class="sync-indicator"><div class="sync-dot wait" id="sync-dot"></div><span id="sync-label">接続中</span></div>
+    <button class="hdr-user-btn" id="hdr-user-btn" onclick="switchUserPrompt()">
       <div class="hdr-user-av" id="hdr-user-av"></div>
       <div class="hdr-user-name" id="hdr-user-name"></div>
-      <span style="font-size:9px;color:#B89A70;">▼</span>
-    </div>
+    </button>
   </div>
 
   <div class="app-body">
-    <!-- Sidebar -->
+    <!-- Sidebar PC -->
     <div class="sidebar">
       <div class="sb-user" id="sb-user"></div>
       <div class="sb-nav">
         <div class="sb-nav-item active" onclick="showScreen('home',this)">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1.5" fill="currentColor"/><rect x="8" y="1" width="5" height="5" rx="1.5" fill="currentColor" opacity=".4"/><rect x="1" y="8" width="5" height="5" rx="1.5" fill="currentColor" opacity=".4"/><rect x="8" y="8" width="5" height="5" rx="1.5" fill="currentColor" opacity=".4"/></svg>
-          ホーム
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1.5" fill="currentColor"/><rect x="8" y="1" width="5" height="5" rx="1.5" fill="currentColor" opacity=".4"/><rect x="1" y="8" width="5" height="5" rx="1.5" fill="currentColor" opacity=".4"/><rect x="8" y="8" width="5" height="5" rx="1.5" fill="currentColor" opacity=".4"/></svg>ホーム
         </div>
         <div class="sb-nav-item" onclick="showScreen('list',this)">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 3.5h10M2 7h10M2 10.5h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-          銘柄一覧
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 3.5h10M2 7h10M2 10.5h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>銘柄一覧
         </div>
         <div class="sb-nav-item" onclick="showScreen('members',this)">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="5" cy="4.5" r="2.5" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="4.5" r="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M1 12c0-2 1.8-3.5 4-3.5s4 1.5 4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-          メンバー
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><circle cx="5" cy="4.5" r="2.5" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="4.5" r="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M1 12c0-2 1.8-3.5 4-3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>メンバー
         </div>
         <div class="sb-nav-item" onclick="showScreen('stats',this)">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 11V7M5 11V4M8 11V6M11 11V2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-          統計
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 11V7M5 11V4M8 11V6M11 11V2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>統計
         </div>
       </div>
       <div class="sb-members">
-        <div class="sb-members-title">メンバー一覧</div>
+        <div class="sb-members-title">メンバー</div>
         <div id="sb-member-chips"></div>
-        <div style="margin-top:6px;font-size:10px;color:#B89A70;cursor:pointer;text-decoration:underline;" onclick="openAddMember()">＋ メンバーを追加</div>
+        <div style="margin-top:5px;font-size:9px;color:#B89A70;cursor:pointer;text-decoration:underline;" onclick="openAddMember()">＋ 追加</div>
       </div>
     </div>
 
     <!-- Main -->
-    <div class="main-content" id="main-content">
+    <div class="main-content">
+      <!-- HOME -->
       <div id="screen-home" class="screen active">
-        <div class="member-row" id="home-member-row"></div>
-        <div class="cat-tabs">
-          <div class="cat-tab all active-cat" onclick="setCatFilter('all',this)">全て（130）</div>
-          <div class="cat-tab t1" onclick="setCatFilter('t1',this)">🍯 モダン エレガント（001-039）</div>
-          <div class="cat-tab t2" onclick="setCatFilter('t2',this)">💜 モダン シック（040-079）</div>
-          <div class="cat-tab t3" onclick="setCatFilter('t3',this)">🌿 クラシック リッチ（080-105）</div>
-          <div class="cat-tab t4" onclick="setCatFilter('t4',this)">💙 クラシック マイルド（106-130）</div>
+        <div class="home-content" id="home-content">
+          <div class="ptr-indicator" id="ptr-indicator">↓ 引っ張って更新</div>
+          <div class="member-row" id="home-member-row"></div>
+          <div class="cat-tabs" id="home-cat-tabs">
+            <div class="cat-tab all active-cat" onclick="setCatFilter('all',this)">全て</div>
+            <div class="cat-tab t1" onclick="setCatFilter('t1',this)">🍯 M.エレガント</div>
+            <div class="cat-tab t2" onclick="setCatFilter('t2',this)">💜 M.シック</div>
+            <div class="cat-tab t3" onclick="setCatFilter('t3',this)">🌿 C.リッチ</div>
+            <div class="cat-tab t4" onclick="setCatFilter('t4',this)">💙 C.マイルド</div>
+          </div>
+          <div class="sake-grid" id="home-sake-grid"></div>
         </div>
-        <div class="sake-grid" id="home-sake-grid"></div>
-        <div class="sake-list" id="home-sake-list"></div>
       </div>
+      <!-- LIST -->
       <div id="screen-list" class="screen">
         <div class="list-toolbar">
           <button class="filter-btn active" onclick="setListFilter('all',this)">全て</button>
-          <button class="filter-btn" onclick="setListFilter('t1',this)">M.エレガント</button>
-          <button class="filter-btn" onclick="setListFilter('t2',this)">M.シック</button>
-          <button class="filter-btn" onclick="setListFilter('t3',this)">C.リッチ</button>
-          <button class="filter-btn" onclick="setListFilter('t4',this)">C.マイルド</button>
+          <button class="filter-btn" onclick="setListFilter('t1',this)">M.E</button>
+          <button class="filter-btn" onclick="setListFilter('t2',this)">M.S</button>
+          <button class="filter-btn" onclick="setListFilter('t3',this)">C.R</button>
+          <button class="filter-btn" onclick="setListFilter('t4',this)">C.M</button>
           <button class="filter-btn" onclick="setListFilter('drunk',this)">飲んだ</button>
-          <input class="search-box" id="search-box" placeholder="銘柄名を検索…" oninput="renderList()">
-          <span style="font-size:11px;color:#B89A70;" id="list-count"></span>
+          <input class="search-box" id="search-box" placeholder="検索…" oninput="renderList()">
+          <span style="font-size:10px;color:#B89A70;" id="list-count"></span>
         </div>
-        <div class="sake-grid" id="list-sake-grid"></div>
-        <div class="sake-list" id="list-sake-list"></div>
+        <div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;">
+          <div class="sake-list-view" id="list-sake-list"></div>
+        </div>
       </div>
+      <!-- MEMBERS -->
       <div id="screen-members" class="screen">
-        <div class="member-cards" id="member-cards"></div>
+        <div class="members-content">
+          <div class="member-cards" id="member-cards"></div>
+        </div>
       </div>
+      <!-- STATS -->
       <div id="screen-stats" class="screen">
-        <div class="stats-grid-main" id="stats-grid-main"></div>
-        <div style="font-size:12px;font-weight:700;color:var(--brown);margin-bottom:8px;">🏆 高評価ランキング</div>
-        <div class="rank-list" id="rank-list"></div>
-        <div style="font-size:12px;font-weight:700;color:var(--brown);margin-bottom:8px;">👥 メンバー別制覇数</div>
-        <div class="rank-list" id="member-rank-list"></div>
+        <div class="stats-content">
+          <div class="stats-grid-main" id="stats-grid-main"></div>
+          <div style="font-size:11px;font-weight:700;color:var(--brown);margin-bottom:7px;">🏆 高評価ランキング</div>
+          <div class="rank-list" id="rank-list"></div>
+          <div style="font-size:11px;font-weight:700;color:var(--brown);margin-bottom:7px;">👥 メンバー別制覇数</div>
+          <div class="rank-list" id="member-rank-list"></div>
+        </div>
       </div>
     </div>
 
-    <!-- Right panel -->
+    <!-- Right panel PC -->
     <div class="right-panel">
       <div class="rp-title">📊 統計</div>
       <div class="rp-stat-grid" id="rp-stat-grid"></div>
@@ -417,32 +471,49 @@ input.name-input{width:100%;border:1px solid var(--border);border-radius:10px;pa
     </div>
   </div>
 
-  <div class="bottom-nav" id="bottom-nav">
-    <button class="bn-item active" onclick="showScreen('home',this)"><div class="bn-icon">🏠</div><div class="bn-label">ホーム</div></button>
-    <button class="bn-item" onclick="showScreen('list',this)"><div class="bn-icon">📋</div><div class="bn-label">一覧</div></button>
-    <button class="bn-item" onclick="showScreen('members',this)"><div class="bn-icon">👥</div><div class="bn-label">メンバー</div></button>
-    <button class="bn-item" onclick="showScreen('stats',this)"><div class="bn-icon">📊</div><div class="bn-label">統計</div></button>
+  <!-- Bottom nav mobile -->
+  <div class="bottom-nav">
+    <div class="bn-items">
+      <button class="bn-item active" onclick="showScreen('home',this)"><div class="bn-icon">🏠</div><div class="bn-label">ホーム</div></button>
+      <button class="bn-item" onclick="showScreen('list',this)"><div class="bn-icon">📋</div><div class="bn-label">一覧</div></button>
+      <button class="bn-item" onclick="showScreen('members',this)"><div class="bn-icon">👥</div><div class="bn-label">メンバー</div></button>
+      <button class="bn-item" onclick="showScreen('stats',this)"><div class="bn-icon">📊</div><div class="bn-label">統計</div></button>
+    </div>
   </div>
 </div>
 
-<!-- Detail Modal -->
-<div id="detail-modal">
-  <div class="detail-sheet">
-    <div class="detail-handle"></div>
-    <div class="detail-hdr">
-      <div class="d-num" id="d-num"></div>
-      <div class="d-name" id="d-name"></div>
-      <span class="d-type" id="d-type"></span>
+<!-- Quick Modal -->
+<div id="quick-modal">
+  <div class="quick-sheet" id="quick-sheet">
+    <div class="qs-handle"></div>
+    <div class="qs-header">
+      <span class="qs-cat" id="qs-cat"></span>
+      <div class="qs-num" id="qs-num"></div>
+      <div class="qs-name" id="qs-name"></div>
+      <div class="qs-pref" id="qs-pref"></div>
     </div>
-    <div class="detail-body">
-      <div class="d-section"><div class="d-section-title">🍶 飲んだことある？</div><div id="d-member-checks"></div></div>
-      <div class="d-section"><div class="d-section-title">⭐ 評価（みんなで共有）</div><div class="star-row" id="d-stars"></div></div>
-      <div class="d-section"><div class="d-section-title">🏮 味の印象</div><div class="tag-chips" id="d-tags"></div></div>
-      <div class="d-section"><div class="d-section-title">🏪 飲んだお店</div><input class="shop-input" id="d-shop" placeholder="お店の名前（覚えていなければ空欄でOK）"></div>
-      <div class="d-section"><div class="d-section-title">💬 ひとこと</div><textarea class="note-input" id="d-note" placeholder="感想・メモを自由に…"></textarea></div>
-      <button class="save-btn" onclick="saveDetail()">💾 保存する</button>
+    <div class="qs-body">
+      <div class="qs-drunk-section">
+        <div class="qs-section-title">🍶 あなたは飲みましたか？</div>
+        <button class="drunk-big-btn no" id="qs-drunk-btn" onclick="toggleMyDrunk()">未飲</button>
+        <div class="other-members" id="qs-other-members"></div>
+      </div>
+      <div class="qs-rating-section">
+        <div class="qs-section-title">⭐ 評価（みんなで共有）</div>
+        <div class="star-row" id="qs-stars"></div>
+      </div>
+      <button class="qs-detail-toggle" onclick="toggleDetail()" id="detail-toggle-btn">＋ メモ・タグを追加</button>
+      <div class="qs-detail-section" id="qs-detail-section">
+        <div class="qs-section-title" style="margin-bottom:6px;">🏮 味の印象</div>
+        <div class="tag-chips" id="qs-tags"></div>
+        <div class="qs-section-title" style="margin:10px 0 6px;">🏪 飲んだお店</div>
+        <input class="shop-input" id="qs-shop" placeholder="お店の名前（任意）">
+        <div class="qs-section-title" style="margin-bottom:6px;">💬 ひとこと</div>
+        <textarea class="note-input" id="qs-note" placeholder="感想・メモ…"></textarea>
+      </div>
+      <button class="save-btn" onclick="saveQuick()">💾 保存する</button>
       <div class="saving-msg" id="saving-msg"></div>
-      <button class="close-btn" onclick="closeDetail()">閉じる</button>
+      <button class="close-btn" onclick="closeQuick()">閉じる</button>
     </div>
   </div>
 </div>
@@ -458,37 +529,42 @@ input.name-input{width:100%;border:1px solid var(--border);border-radius:10px;pa
   </div>
 </div>
 
+<!-- Toast -->
+<div id="toast"></div>
+
 <script>
 // ============================================================
 // Supabase設定
 // ============================================================
-const SUPABASE_URL='https://rtvsncbpsatgjshxzzqp.supabase.co';
-const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0dnNuY2Jwc2F0Z2pzaHh6enFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTkwNTQsImV4cCI6MjA5MTgzNTA1NH0.GPCatBcxnKEz5QOssHtLYXNI9O4wRj53aQbtTiF3g38';
+const SB_URL='https://rtvsncbpsatgjshxzzqp.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0dnNuY2Jwc2F0Z2pzaHh6enFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTkwNTQsImV4cCI6MjA5MTgzNTA1NH0.GPCatBcxnKEz5QOssHtLYXNI9O4wRj53aQbtTiF3g38';
 
 async function sbFetch(path,opts={}){
-  const res=await fetch(SUPABASE_URL+'/rest/v1/'+path,{
-    headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation',...(opts.headers||{})},
-    ...opts
-  });
-  if(!res.ok){const e=await res.text();throw new Error(e);}
+  const headers={
+    'apikey':SB_KEY,
+    'Authorization':'Bearer '+SB_KEY,
+    'Content-Type':'application/json',
+    ...(opts.headers||{})
+  };
+  const res=await fetch(SB_URL+'/rest/v1/'+path,{...opts,headers});
+  if(!res.ok){const e=await res.text();throw new Error(res.status+': '+e);}
   const txt=await res.text();
   return txt?JSON.parse(txt):[];
 }
 
 // ============================================================
-// 定数
+// 定数・データ
 // ============================================================
 const TASTE_TAGS=['フルーティ','すっきり','どっしり','甘口','辛口','爽やか','まろやか','キレがいい','熱燗向き','冷酒向き','食中酒','香り豊か'];
 const MEDALS=['🥇','🥈','🥉','4','5','6','7','8'];
 const CAT_INFO={
-  t1:{label:'モダン エレガント',range:[1,39]},
-  t2:{label:'モダン シック',range:[40,79]},
-  t3:{label:'クラシック リッチ',range:[80,105]},
-  t4:{label:'クラシック マイルド',range:[106,130]},
+  t1:{label:'モダン エレガント'},
+  t2:{label:'モダン シック'},
+  t3:{label:'クラシック リッチ'},
+  t4:{label:'クラシック マイルド'},
 };
 const getCat=no=>no<=39?'t1':no<=79?'t2':no<=105?'t3':'t4';
 const getMemberColor=i=>['#C17F3B','#639922','#378ADD','#D4537E','#1D9E75','#7F77DD','#D85A30','#BA7517'][i%8];
-
 const TITLES=[
   {min:0,max:0,title:'🌱 日本酒初心者',comment:'さあ、旅のはじまり'},
   {min:1,max:4,title:'🍵 見習い酒飲み',comment:'まずは一杯から'},
@@ -508,166 +584,255 @@ const getTitle=n=>TITLES.find(t=>n>=t.min&&n<=t.max)||TITLES[TITLES.length-1];
 // アバター定義
 const AVATAR_GROUPS=[
   {label:'🍶 日本酒キャラ（男）',avatars:[
-    {id:'a1',label:'とっくり男子',svg:`<svg width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="16" r="10" fill="#F5E6C8" stroke="#C17F3B" stroke-width="1.5"/><circle cx="16" cy="14" r="2" fill="#2C1A0E"/><circle cx="24" cy="14" r="2" fill="#2C1A0E"/><path d="M15 20 Q20 24 25 20" stroke="#C17F3B" stroke-width="1.5" stroke-linecap="round" fill="none"/><rect x="14" y="5" width="12" height="5" rx="2" fill="#C17F3B"/><path d="M17 2 Q20 0 23 2" stroke="#C17F3B" stroke-width="1.5" fill="none"/><ellipse cx="20" cy="30" rx="8" ry="6" fill="#F5E6C8" stroke="#C17F3B" stroke-width="1.5"/></svg>`},
-    {id:'a2',label:'もろみ男子',svg:`<svg width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="15" r="10" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.5"/><circle cx="16" cy="13" r="2" fill="#2C1A0E"/><circle cx="24" cy="13" r="2" fill="#2C1A0E"/><path d="M15 19 Q20 23 25 19" stroke="#2E7D32" stroke-width="1.5" stroke-linecap="round" fill="none"/><rect x="10" y="5" width="20" height="6" rx="3" fill="#2E7D32"/><rect x="13" y="3" width="4" height="3" rx="1" fill="#2E7D32"/><rect x="23" y="3" width="4" height="3" rx="1" fill="#2E7D32"/></svg>`},
-    {id:'a3',label:'きんかん男子',svg:`<svg width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="15" r="10" fill="#FFF8E1" stroke="#F57F17" stroke-width="1.5"/><circle cx="16" cy="13" r="2" fill="#2C1A0E"/><circle cx="24" cy="13" r="2" fill="#2C1A0E"/><path d="M16 20 Q20 23 24 20" stroke="#F57F17" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M14 6 Q20 1 26 6 L24 10 Q20 7 16 10Z" fill="#F57F17"/></svg>`},
+    {id:'a1',svg:`<svg width="38" height="38" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="16" r="10" fill="#F5E6C8" stroke="#C17F3B" stroke-width="1.5"/><circle cx="16" cy="14" r="2" fill="#2C1A0E"/><circle cx="24" cy="14" r="2" fill="#2C1A0E"/><path d="M15 20 Q20 24 25 20" stroke="#C17F3B" stroke-width="1.5" stroke-linecap="round" fill="none"/><rect x="14" y="5" width="12" height="5" rx="2" fill="#C17F3B"/><ellipse cx="20" cy="30" rx="8" ry="6" fill="#F5E6C8" stroke="#C17F3B" stroke-width="1.5"/></svg>`},
+    {id:'a2',svg:`<svg width="38" height="38" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="15" r="10" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.5"/><circle cx="16" cy="13" r="2" fill="#2C1A0E"/><circle cx="24" cy="13" r="2" fill="#2C1A0E"/><path d="M15 19 Q20 23 25 19" stroke="#2E7D32" stroke-width="1.5" stroke-linecap="round" fill="none"/><rect x="10" y="5" width="20" height="6" rx="3" fill="#2E7D32"/></svg>`},
+    {id:'a3',svg:`<svg width="38" height="38" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="15" r="10" fill="#FFF8E1" stroke="#F57F17" stroke-width="1.5"/><circle cx="16" cy="13" r="2" fill="#2C1A0E"/><circle cx="24" cy="13" r="2" fill="#2C1A0E"/><path d="M16 20 Q20 23 24 20" stroke="#F57F17" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M14 6 Q20 1 26 6 L24 10 Q20 7 16 10Z" fill="#F57F17"/></svg>`},
   ]},
   {label:'🌸 日本酒キャラ（女）',avatars:[
-    {id:'b1',label:'おちょこ女子',svg:`<svg width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="16" r="10" fill="#FFE4EF" stroke="#D4537E" stroke-width="1.5"/><circle cx="16" cy="14" r="2" fill="#2C1A0E"/><circle cx="24" cy="14" r="2" fill="#2C1A0E"/><path d="M15 20 Q20 24 25 20" stroke="#D4537E" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M12 8 Q14 4 18 6 Q20 2 22 6 Q26 4 28 8" stroke="#D4537E" stroke-width="1.5" fill="none"/><circle cx="20" cy="29" r="7" fill="#FFE4EF" stroke="#D4537E" stroke-width="1.5"/></svg>`},
-    {id:'b2',label:'しこみ水女子',svg:`<svg width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="15" r="10" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5"/><circle cx="16" cy="14" r="2.5" fill="#1565C0" opacity="0.7"/><circle cx="24" cy="14" r="2.5" fill="#1565C0" opacity="0.7"/><path d="M15 20 Q20 22 25 20" stroke="#1565C0" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M10 8 Q20 2 30 8" stroke="#1565C0" stroke-width="2" fill="none"/><ellipse cx="20" cy="30" rx="9" ry="5" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5"/></svg>`},
-    {id:'b3',label:'むらさき女子',svg:`<svg width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="15" r="10" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="1.5"/><circle cx="16" cy="14" r="2" fill="#2C1A0E"/><circle cx="24" cy="14" r="2" fill="#2C1A0E"/><path d="M15 20 Q20 24 25 20" stroke="#7B1FA2" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M10 7 Q15 3 20 5 Q25 3 30 7" stroke="#7B1FA2" stroke-width="2" fill="none"/><circle cx="13" cy="8" r="2" fill="#CE93D8"/><circle cx="27" cy="8" r="2" fill="#CE93D8"/></svg>`},
+    {id:'b1',svg:`<svg width="38" height="38" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="16" r="10" fill="#FFE4EF" stroke="#D4537E" stroke-width="1.5"/><circle cx="16" cy="14" r="2" fill="#2C1A0E"/><circle cx="24" cy="14" r="2" fill="#2C1A0E"/><path d="M15 20 Q20 24 25 20" stroke="#D4537E" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M12 8 Q14 4 18 6 Q20 2 22 6 Q26 4 28 8" stroke="#D4537E" stroke-width="1.5" fill="none"/><circle cx="20" cy="29" r="7" fill="#FFE4EF" stroke="#D4537E" stroke-width="1.5"/></svg>`},
+    {id:'b2',svg:`<svg width="38" height="38" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="15" r="10" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5"/><circle cx="16" cy="14" r="2.5" fill="#1565C0" opacity="0.7"/><circle cx="24" cy="14" r="2.5" fill="#1565C0" opacity="0.7"/><path d="M15 20 Q20 22 25 20" stroke="#1565C0" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M10 8 Q20 2 30 8" stroke="#1565C0" stroke-width="2" fill="none"/></svg>`},
+    {id:'b3',svg:`<svg width="38" height="38" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="15" r="10" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="1.5"/><circle cx="16" cy="14" r="2" fill="#2C1A0E"/><circle cx="24" cy="14" r="2" fill="#2C1A0E"/><path d="M15 20 Q20 24 25 20" stroke="#7B1FA2" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M10 7 Q15 3 20 5 Q25 3 30 7" stroke="#7B1FA2" stroke-width="2" fill="none"/><circle cx="13" cy="8" r="2" fill="#CE93D8"/><circle cx="27" cy="8" r="2" fill="#CE93D8"/></svg>`},
   ]},
   {label:'🐰 動物×ハット（男）',avatars:[
-    {id:'c1',label:'うさぎ杜氏',svg:`<svg width="44" height="44" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="24" r="12" fill="#F5DEB3" stroke="#C17F3B" stroke-width="1.5"/><ellipse cx="14" cy="16" rx="5" ry="7" fill="#F5DEB3" stroke="#C17F3B" stroke-width="1.5"/><ellipse cx="30" cy="16" rx="5" ry="7" fill="#F5DEB3" stroke="#C17F3B" stroke-width="1.5"/><circle cx="18" cy="23" r="2.5" fill="#2C1A0E"/><circle cx="26" cy="23" r="2.5" fill="#2C1A0E"/><ellipse cx="22" cy="27" rx="3" ry="2" fill="#F4A0A0"/><path d="M17 30 Q22 34 27 30" stroke="#C17F3B" stroke-width="1.5" fill="none"/><rect x="16" y="4" width="12" height="5" rx="2.5" fill="#2C1A0E"/><rect x="14" y="8" width="16" height="3" rx="1.5" fill="#2C1A0E"/></svg>`},
-    {id:'c2',label:'かえる吟醸帽',svg:`<svg width="44" height="44" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="25" r="11" fill="#A5D6A7" stroke="#2E7D32" stroke-width="1.5"/><ellipse cx="22" cy="18" rx="8" ry="6" fill="#A5D6A7" stroke="#2E7D32" stroke-width="1.5"/><circle cx="18" cy="24" r="2.5" fill="#2C1A0E"/><circle cx="26" cy="24" r="2.5" fill="#2C1A0E"/><circle cx="22" cy="28" r="2" fill="#1B5E20"/><path d="M17 31 Q22 35 27 31" stroke="#2E7D32" stroke-width="1.5" fill="none"/><ellipse cx="10" cy="22" rx="4" ry="3" fill="#A5D6A7" stroke="#2E7D32" stroke-width="1.5"/><ellipse cx="34" cy="22" rx="4" ry="3" fill="#A5D6A7" stroke="#2E7D32" stroke-width="1.5"/><rect x="17" y="5" width="10" height="6" rx="2" fill="#2C1A0E"/><rect x="15" y="10" width="14" height="3" rx="1.5" fill="#2C1A0E"/></svg>`},
-    {id:'c3',label:'たこ蔵元',svg:`<svg width="44" height="44" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="26" r="10" fill="#B3E5FC" stroke="#0277BD" stroke-width="1.5"/><ellipse cx="22" cy="20" rx="9" ry="7" fill="#B3E5FC" stroke="#0277BD" stroke-width="1.5"/><circle cx="18" cy="20" r="3" fill="#01579B"/><circle cx="26" cy="20" r="3" fill="#01579B"/><circle cx="19" cy="19" r="1" fill="#fff"/><circle cx="27" cy="19" r="1" fill="#fff"/><path d="M17 25 Q22 29 27 25" stroke="#0277BD" stroke-width="1.5" fill="none"/><path d="M22 13 L18 5 M22 13 L22 5 M22 13 L26 5" stroke="#0277BD" stroke-width="1.5" stroke-linecap="round"/></svg>`},
+    {id:'c1',svg:`<svg width="42" height="42" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="24" r="12" fill="#F5DEB3" stroke="#C17F3B" stroke-width="1.5"/><ellipse cx="14" cy="16" rx="5" ry="7" fill="#F5DEB3" stroke="#C17F3B" stroke-width="1.5"/><ellipse cx="30" cy="16" rx="5" ry="7" fill="#F5DEB3" stroke="#C17F3B" stroke-width="1.5"/><circle cx="18" cy="23" r="2.5" fill="#2C1A0E"/><circle cx="26" cy="23" r="2.5" fill="#2C1A0E"/><ellipse cx="22" cy="27" rx="3" ry="2" fill="#F4A0A0"/><path d="M17 30 Q22 34 27 30" stroke="#C17F3B" stroke-width="1.5" fill="none"/><rect x="16" y="4" width="12" height="5" rx="2.5" fill="#2C1A0E"/><rect x="14" y="8" width="16" height="3" rx="1.5" fill="#2C1A0E"/></svg>`},
+    {id:'c2',svg:`<svg width="42" height="42" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="25" r="11" fill="#A5D6A7" stroke="#2E7D32" stroke-width="1.5"/><ellipse cx="22" cy="18" rx="8" ry="6" fill="#A5D6A7" stroke="#2E7D32" stroke-width="1.5"/><circle cx="18" cy="24" r="2.5" fill="#2C1A0E"/><circle cx="26" cy="24" r="2.5" fill="#2C1A0E"/><circle cx="22" cy="28" r="2" fill="#1B5E20"/><path d="M17 31 Q22 35 27 31" stroke="#2E7D32" stroke-width="1.5" fill="none"/><ellipse cx="10" cy="22" rx="4" ry="3" fill="#A5D6A7" stroke="#2E7D32" stroke-width="1.5"/><ellipse cx="34" cy="22" rx="4" ry="3" fill="#A5D6A7" stroke="#2E7D32" stroke-width="1.5"/><rect x="17" y="5" width="10" height="6" rx="2" fill="#2C1A0E"/><rect x="15" y="10" width="14" height="3" rx="1.5" fill="#2C1A0E"/></svg>`},
+    {id:'c3',svg:`<svg width="42" height="42" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="26" r="10" fill="#B3E5FC" stroke="#0277BD" stroke-width="1.5"/><ellipse cx="22" cy="20" rx="9" ry="7" fill="#B3E5FC" stroke="#0277BD" stroke-width="1.5"/><circle cx="18" cy="20" r="3" fill="#01579B"/><circle cx="26" cy="20" r="3" fill="#01579B"/><circle cx="19" cy="19" r="1" fill="#fff"/><circle cx="27" cy="19" r="1" fill="#fff"/><path d="M17 25 Q22 29 27 25" stroke="#0277BD" stroke-width="1.5" fill="none"/><path d="M22 13 L18 5 M22 13 L22 5 M22 13 L26 5" stroke="#0277BD" stroke-width="1.5" stroke-linecap="round"/></svg>`},
   ]},
   {label:'🦊 動物×ハット（女）',avatars:[
-    {id:'d1',label:'うさぎ桜',svg:`<svg width="44" height="44" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="24" r="12" fill="#FFD7E8" stroke="#D4537E" stroke-width="1.5"/><ellipse cx="16" cy="15" rx="4" ry="5" fill="#FFD7E8" stroke="#D4537E" stroke-width="1.5"/><ellipse cx="28" cy="15" rx="4" ry="5" fill="#FFD7E8" stroke="#D4537E" stroke-width="1.5"/><ellipse cx="16" cy="14" rx="2" ry="3" fill="#FFB3D1"/><ellipse cx="28" cy="14" rx="2" ry="3" fill="#FFB3D1"/><circle cx="18" cy="23" r="2.5" fill="#2C1A0E"/><circle cx="26" cy="23" r="2.5" fill="#2C1A0E"/><ellipse cx="22" cy="27" rx="3" ry="2" fill="#F4A0A0"/><path d="M17 30 Q22 34 27 30" stroke="#D4537E" stroke-width="1.5" fill="none"/><path d="M14 8 Q18 4 22 6 Q26 4 30 8" stroke="#D4537E" stroke-width="2" fill="none"/><circle cx="18" cy="5" r="2" fill="#FFB3D1"/><circle cx="26" cy="5" r="2" fill="#FFB3D1"/></svg>`},
-    {id:'d2',label:'きつね美人',svg:`<svg width="44" height="44" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="25" r="11" fill="#FFDEAD" stroke="#D2691E" stroke-width="1.5"/><circle cx="22" cy="17" r="8" fill="#FFDEAD" stroke="#D2691E" stroke-width="1.5"/><circle cx="18" cy="16" r="2.5" fill="#2C1A0E"/><circle cx="26" cy="16" r="2.5" fill="#2C1A0E"/><circle cx="19" cy="15" r="0.8" fill="#fff"/><circle cx="27" cy="15" r="0.8" fill="#fff"/><ellipse cx="22" cy="20" rx="3" ry="2" fill="#D2691E"/><path d="M17 23 Q22 27 27 23" stroke="#D2691E" stroke-width="1.5" fill="none"/><path d="M13 10 Q18 5 22 7 Q26 5 31 10" stroke="#D2691E" stroke-width="2" fill="none"/><circle cx="13" cy="11" r="3" fill="#FFDEAD" stroke="#D2691E" stroke-width="1.5"/><circle cx="31" cy="11" r="3" fill="#FFDEAD" stroke="#D2691E" stroke-width="1.5"/></svg>`},
-    {id:'d3',label:'ねこ酒仙',svg:`<svg width="44" height="44" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="26" r="10" fill="#E1BEE7" stroke="#7B1FA2" stroke-width="1.5"/><circle cx="22" cy="19" r="8" fill="#E1BEE7" stroke="#7B1FA2" stroke-width="1.5"/><circle cx="18" cy="18" r="2.5" fill="#4A148C"/><circle cx="26" cy="18" r="2.5" fill="#4A148C"/><circle cx="22" cy="22" r="2" fill="#CE93D8"/><path d="M17 24 Q22 28 27 24" stroke="#7B1FA2" stroke-width="1.5" fill="none"/><path d="M14 12 Q22 6 30 12" stroke="#7B1FA2" stroke-width="2" fill="none"/><circle cx="14" cy="12" r="3" fill="#E1BEE7" stroke="#7B1FA2" stroke-width="1.5"/><circle cx="30" cy="12" r="3" fill="#E1BEE7" stroke="#7B1FA2" stroke-width="1.5"/></svg>`},
+    {id:'d1',svg:`<svg width="42" height="42" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="24" r="12" fill="#FFD7E8" stroke="#D4537E" stroke-width="1.5"/><ellipse cx="16" cy="15" rx="4" ry="5" fill="#FFD7E8" stroke="#D4537E" stroke-width="1.5"/><ellipse cx="28" cy="15" rx="4" ry="5" fill="#FFD7E8" stroke="#D4537E" stroke-width="1.5"/><ellipse cx="16" cy="14" rx="2" ry="3" fill="#FFB3D1"/><ellipse cx="28" cy="14" rx="2" ry="3" fill="#FFB3D1"/><circle cx="18" cy="23" r="2.5" fill="#2C1A0E"/><circle cx="26" cy="23" r="2.5" fill="#2C1A0E"/><ellipse cx="22" cy="27" rx="3" ry="2" fill="#F4A0A0"/><path d="M17 30 Q22 34 27 30" stroke="#D4537E" stroke-width="1.5" fill="none"/><path d="M14 8 Q18 4 22 6 Q26 4 30 8" stroke="#D4537E" stroke-width="2" fill="none"/><circle cx="18" cy="5" r="2" fill="#FFB3D1"/><circle cx="26" cy="5" r="2" fill="#FFB3D1"/></svg>`},
+    {id:'d2',svg:`<svg width="42" height="42" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="25" r="11" fill="#FFDEAD" stroke="#D2691E" stroke-width="1.5"/><circle cx="22" cy="17" r="8" fill="#FFDEAD" stroke="#D2691E" stroke-width="1.5"/><circle cx="18" cy="16" r="2.5" fill="#2C1A0E"/><circle cx="26" cy="16" r="2.5" fill="#2C1A0E"/><ellipse cx="22" cy="20" rx="3" ry="2" fill="#D2691E"/><path d="M17 23 Q22 27 27 23" stroke="#D2691E" stroke-width="1.5" fill="none"/><path d="M13 10 Q18 5 22 7 Q26 5 31 10" stroke="#D2691E" stroke-width="2" fill="none"/><circle cx="13" cy="11" r="3" fill="#FFDEAD" stroke="#D2691E" stroke-width="1.5"/><circle cx="31" cy="11" r="3" fill="#FFDEAD" stroke="#D2691E" stroke-width="1.5"/></svg>`},
+    {id:'d3',svg:`<svg width="42" height="42" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="26" r="10" fill="#E1BEE7" stroke="#7B1FA2" stroke-width="1.5"/><circle cx="22" cy="19" r="8" fill="#E1BEE7" stroke="#7B1FA2" stroke-width="1.5"/><circle cx="18" cy="18" r="2.5" fill="#4A148C"/><circle cx="26" cy="18" r="2.5" fill="#4A148C"/><circle cx="22" cy="22" r="2" fill="#CE93D8"/><path d="M17 24 Q22 28 27 24" stroke="#7B1FA2" stroke-width="1.5" fill="none"/><path d="M14 12 Q22 6 30 12" stroke="#7B1FA2" stroke-width="2" fill="none"/><circle cx="14" cy="12" r="3" fill="#E1BEE7" stroke="#7B1FA2" stroke-width="1.5"/><circle cx="30" cy="12" r="3" fill="#E1BEE7" stroke="#7B1FA2" stroke-width="1.5"/></svg>`},
   ]},
   {label:'✨ ちびキャラ（男）',avatars:[
-    {id:'e1',label:'とっくりん',svg:`<svg width="44" height="44" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="28" r="10" fill="#FFDAB9" stroke="#C17F3B" stroke-width="1.5"/><circle cx="18" cy="27" r="2.5" fill="#2C1A0E"/><circle cx="26" cy="27" r="2.5" fill="#2C1A0E"/><circle cx="19" cy="26" r="0.8" fill="#fff"/><circle cx="27" cy="26" r="0.8" fill="#fff"/><path d="M17 32 Q22 36 27 32" stroke="#C17F3B" stroke-width="1.5" fill="none"/><rect x="18" y="12" width="8" height="10" rx="2" fill="#F5E6C8" stroke="#C17F3B" stroke-width="1.5"/><rect x="20" y="9" width="4" height="4" rx="1.5" fill="#D4A96A"/><line x1="22" y1="9" x2="22" y2="7" stroke="#C17F3B" stroke-width="1.5" stroke-linecap="round"/><circle cx="22" cy="6" r="2" fill="#C17F3B"/></svg>`},
-    {id:'e2',label:'ますくん',svg:`<svg width="44" height="44" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="28" r="10" fill="#C8E6C9" stroke="#2E7D32" stroke-width="1.5"/><circle cx="18" cy="27" r="2.5" fill="#2C1A0E"/><circle cx="26" cy="27" r="2.5" fill="#2C1A0E"/><path d="M18 32 Q22 35 26 32" stroke="#2E7D32" stroke-width="1.5" fill="none"/><rect x="14" y="10" width="16" height="14" rx="2" fill="#C8E6C9" stroke="#2E7D32" stroke-width="1.5"/><rect x="12" y="8" width="20" height="4" rx="1.5" fill="#2E7D32"/><line x1="18" y1="14" x2="26" y2="14" stroke="#2E7D32" stroke-width="1"/><line x1="18" y1="17" x2="26" y2="17" stroke="#2E7D32" stroke-width="1"/></svg>`},
-    {id:'e3',label:'すいめいくん',svg:`<svg width="44" height="44" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="28" r="10" fill="#BBDEFB" stroke="#1565C0" stroke-width="1.5"/><circle cx="18" cy="27" r="2.5" fill="#2C1A0E"/><circle cx="26" cy="27" r="2.5" fill="#2C1A0E"/><path d="M18 32 Q22 35 26 32" stroke="#1565C0" stroke-width="1.5" fill="none"/><path d="M14 20 Q14 8 22 6 Q30 8 30 20" fill="#BBDEFB" stroke="#1565C0" stroke-width="1.5"/><path d="M14 16 Q14 8 22 6 Q30 8 30 16" fill="#90CAF9"/></svg>`},
+    {id:'e1',svg:`<svg width="42" height="42" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="28" r="10" fill="#FFDAB9" stroke="#C17F3B" stroke-width="1.5"/><circle cx="18" cy="27" r="2.5" fill="#2C1A0E"/><circle cx="26" cy="27" r="2.5" fill="#2C1A0E"/><circle cx="19" cy="26" r="0.8" fill="#fff"/><circle cx="27" cy="26" r="0.8" fill="#fff"/><path d="M17 32 Q22 36 27 32" stroke="#C17F3B" stroke-width="1.5" fill="none"/><rect x="18" y="12" width="8" height="10" rx="2" fill="#F5E6C8" stroke="#C17F3B" stroke-width="1.5"/><rect x="20" y="9" width="4" height="4" rx="1.5" fill="#D4A96A"/><line x1="22" y1="9" x2="22" y2="7" stroke="#C17F3B" stroke-width="1.5" stroke-linecap="round"/><circle cx="22" cy="6" r="2" fill="#C17F3B"/></svg>`},
+    {id:'e2',svg:`<svg width="42" height="42" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="28" r="10" fill="#C8E6C9" stroke="#2E7D32" stroke-width="1.5"/><circle cx="18" cy="27" r="2.5" fill="#2C1A0E"/><circle cx="26" cy="27" r="2.5" fill="#2C1A0E"/><path d="M18 32 Q22 35 26 32" stroke="#2E7D32" stroke-width="1.5" fill="none"/><rect x="14" y="10" width="16" height="14" rx="2" fill="#C8E6C9" stroke="#2E7D32" stroke-width="1.5"/><rect x="12" y="8" width="20" height="4" rx="1.5" fill="#2E7D32"/></svg>`},
+    {id:'e3',svg:`<svg width="42" height="42" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="28" r="10" fill="#BBDEFB" stroke="#1565C0" stroke-width="1.5"/><circle cx="18" cy="27" r="2.5" fill="#2C1A0E"/><circle cx="26" cy="27" r="2.5" fill="#2C1A0E"/><path d="M18 32 Q22 35 26 32" stroke="#1565C0" stroke-width="1.5" fill="none"/><path d="M14 20 Q14 8 22 6 Q30 8 30 20" fill="#BBDEFB" stroke="#1565C0" stroke-width="1.5"/><path d="M14 16 Q14 8 22 6 Q30 8 30 16" fill="#90CAF9"/></svg>`},
   ]},
   {label:'💕 ちびキャラ（女）',avatars:[
-    {id:'f1',label:'おちょこちゃん',svg:`<svg width="44" height="44" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="28" r="10" fill="#FFD6E7" stroke="#D4537E" stroke-width="1.5"/><circle cx="18" cy="27" r="2.5" fill="#2C1A0E"/><circle cx="26" cy="27" r="2.5" fill="#2C1A0E"/><circle cx="19" cy="26" r="0.8" fill="#fff"/><circle cx="27" cy="26" r="0.8" fill="#fff"/><path d="M17 32 Q22 36 27 32" stroke="#D4537E" stroke-width="1.5" fill="none"/><ellipse cx="22" cy="17" rx="8" ry="5" fill="#FFD6E7" stroke="#D4537E" stroke-width="1.5"/><circle cx="18" cy="10" r="2" fill="#FFB3D1"/><circle cx="26" cy="10" r="2" fill="#FFB3D1"/><circle cx="22" cy="8" r="2" fill="#D4537E"/></svg>`},
-    {id:'f2',label:'たるこ',svg:`<svg width="44" height="44" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="28" r="10" fill="#FFF9C4" stroke="#F57F17" stroke-width="1.5"/><circle cx="18" cy="27" r="2.5" fill="#2C1A0E"/><circle cx="26" cy="27" r="2.5" fill="#2C1A0E"/><path d="M18 32 Q22 36 26 32" stroke="#F57F17" stroke-width="1.5" fill="none"/><ellipse cx="22" cy="30" rx="2" ry="1.5" fill="#FFCC02"/><path d="M14 18 Q16 8 22 6 Q28 8 30 18" fill="#FFF9C4" stroke="#F57F17" stroke-width="1.5"/><path d="M16 14 Q22 10 28 14" fill="#FFCC02" stroke="none"/><circle cx="22" cy="6" r="2" fill="#F57F17"/></svg>`},
-    {id:'f3',label:'じゅんまいちゃん',svg:`<svg width="44" height="44" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="28" r="10" fill="#E1BEE7" stroke="#7B1FA2" stroke-width="1.5"/><circle cx="18" cy="27" r="2.5" fill="#2C1A0E"/><circle cx="26" cy="27" r="2.5" fill="#2C1A0E"/><circle cx="19" cy="26" r="0.8" fill="#fff"/><circle cx="27" cy="26" r="0.8" fill="#fff"/><path d="M17 32 Q22 36 27 32" stroke="#7B1FA2" stroke-width="1.5" fill="none"/><path d="M13 20 Q14 8 22 7 Q30 8 31 20" fill="#E1BEE7" stroke="#7B1FA2" stroke-width="1.5"/><circle cx="16" cy="11" r="3" fill="#CE93D8" stroke="#7B1FA2" stroke-width="1"/><circle cx="28" cy="11" r="3" fill="#CE93D8" stroke="#7B1FA2" stroke-width="1"/></svg>`},
+    {id:'f1',svg:`<svg width="42" height="42" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="28" r="10" fill="#FFD6E7" stroke="#D4537E" stroke-width="1.5"/><circle cx="18" cy="27" r="2.5" fill="#2C1A0E"/><circle cx="26" cy="27" r="2.5" fill="#2C1A0E"/><circle cx="19" cy="26" r="0.8" fill="#fff"/><circle cx="27" cy="26" r="0.8" fill="#fff"/><path d="M17 32 Q22 36 27 32" stroke="#D4537E" stroke-width="1.5" fill="none"/><ellipse cx="22" cy="17" rx="8" ry="5" fill="#FFD6E7" stroke="#D4537E" stroke-width="1.5"/><circle cx="18" cy="10" r="2" fill="#FFB3D1"/><circle cx="26" cy="10" r="2" fill="#FFB3D1"/><circle cx="22" cy="8" r="2" fill="#D4537E"/></svg>`},
+    {id:'f2',svg:`<svg width="42" height="42" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="28" r="10" fill="#FFF9C4" stroke="#F57F17" stroke-width="1.5"/><circle cx="18" cy="27" r="2.5" fill="#2C1A0E"/><circle cx="26" cy="27" r="2.5" fill="#2C1A0E"/><path d="M18 32 Q22 36 26 32" stroke="#F57F17" stroke-width="1.5" fill="none"/><ellipse cx="22" cy="30" rx="2" ry="1.5" fill="#FFCC02"/><path d="M14 18 Q16 8 22 6 Q28 8 30 18" fill="#FFF9C4" stroke="#F57F17" stroke-width="1.5"/><path d="M16 14 Q22 10 28 14" fill="#FFCC02" stroke="none"/><circle cx="22" cy="6" r="2" fill="#F57F17"/></svg>`},
+    {id:'f3',svg:`<svg width="42" height="42" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="28" r="10" fill="#E1BEE7" stroke="#7B1FA2" stroke-width="1.5"/><circle cx="18" cy="27" r="2.5" fill="#2C1A0E"/><circle cx="26" cy="27" r="2.5" fill="#2C1A0E"/><circle cx="19" cy="26" r="0.8" fill="#fff"/><circle cx="27" cy="26" r="0.8" fill="#fff"/><path d="M17 32 Q22 36 27 32" stroke="#7B1FA2" stroke-width="1.5" fill="none"/><path d="M13 20 Q14 8 22 7 Q30 8 31 20" fill="#E1BEE7" stroke="#7B1FA2" stroke-width="1.5"/><circle cx="16" cy="11" r="3" fill="#CE93D8" stroke="#7B1FA2" stroke-width="1"/><circle cx="28" cy="11" r="3" fill="#CE93D8" stroke="#7B1FA2" stroke-width="1"/></svg>`},
   ]},
 ];
 
+// 銘柄データ（産地・説明付き）
 const SAKE_DATA=[
-  {no:1,name:'獺祭 二割三分'},{no:2,name:'獺祭 三割九分'},
-  {no:3,name:'磯自慢 中取り純米大吟醸'},{no:4,name:'新政 No.6'},
-  {no:5,name:'而今 純米吟醸'},{no:6,name:'飛露喜 特別純米'},
-  {no:7,name:'黒龍 純吟'},{no:8,name:'十四代 本丸'},
-  {no:9,name:'出羽桜 桜花吟醸'},{no:10,name:'くどき上手 純米大吟醸'},
-  {no:11,name:'田酒 特別純米'},{no:12,name:'醸し人九平次'},
-  {no:13,name:'鍋島 特別純米'},{no:14,name:'風の森 秋津穂'},
-  {no:15,name:'篠峯 純米吟醸'},{no:16,name:'悦凱陣 純米'},
-  {no:17,name:'仙禽 モダン仙禽'},{no:18,name:'雨後の月 純米大吟醸'},
-  {no:19,name:'一ノ蔵 特別純米'},{no:20,name:'鳳凰美田 純米吟醸'},
-  {no:21,name:'天の戸 純米'},{no:22,name:'三井の寿 純米大吟醸'},
-  {no:23,name:'農口尚彦研究所'},{no:24,name:'花巴 純米'},
-  {no:25,name:'貴 純米吟醸'},{no:26,name:'澤屋まつもと 守破離'},
-  {no:27,name:'射美 純米'},{no:28,name:'姿 純米吟醸'},
-  {no:29,name:'総乃寒紅梅 純米大吟醸'},{no:30,name:'刈穂 純米超辛口'},
-  {no:31,name:'山和 純米吟醸'},{no:32,name:'AKABU 純米'},
-  {no:33,name:'一白水成 純米吟醸'},{no:34,name:'開運 純米'},
-  {no:35,name:'神亀 純米'},{no:36,name:'宝剣 純米'},
-  {no:37,name:'竹鶴 純米'},{no:38,name:'東一 純米吟醸'},
-  {no:39,name:'萩の鶴 純米吟醸'},{no:40,name:'作 純米吟醸'},
-  {no:41,name:'王祿 純米吟醸'},{no:42,name:'みむろ杉 純米吟醸'},
-  {no:43,name:'松の司 純米大吟醸'},{no:44,name:'天青 純米吟醸'},
-  {no:45,name:'南方 純米吟醸'},{no:46,name:'花陽浴 純米大吟醸'},
-  {no:47,name:'奥能登の白菊 純米'},{no:48,name:'常きげん 山廃純米'},
-  {no:49,name:'五凛 純米'},{no:50,name:'福小町 純米大吟醸'},
-  {no:51,name:'ひたち錦 純米大吟醸'},{no:52,name:'鶴齢 純米吟醸'},
-  {no:53,name:'七田 純米'},{no:54,name:'根知男山 純米'},
-  {no:55,name:'信濃錦 純米'},{no:56,name:'赤武 純米'},
-  {no:57,name:'喜楽長 純米吟醸'},{no:58,name:'三重錦 純米'},
-  {no:59,name:'出雲富士 純米吟醸'},{no:60,name:'くれはなし 純米'},
-  {no:61,name:'彩來 純米吟醸'},{no:62,name:'白瀑 純米'},
-  {no:63,name:'千代の亀 純米大吟醸'},{no:64,name:'豊盃 純米吟醸'},
-  {no:65,name:'七本槍 純米'},{no:66,name:'臥龍梅 純米大吟醸'},
-  {no:67,name:'天狗舞 山廃純米'},{no:68,name:'大那 純米吟醸'},
-  {no:69,name:'津島屋 純米'},{no:70,name:'早瀬浦 純米'},
-  {no:71,name:'酔鯨 純米吟醸'},{no:72,name:'香住鶴 純米'},
-  {no:73,name:'剣菱 瑞穂'},{no:74,name:'渓 純米吟醸'},
-  {no:75,name:'望 純米大吟醸'},{no:76,name:'雪の茅舎 純米吟醸'},
-  {no:77,name:'福千歳 純米'},{no:78,name:'るみ子の酒 純米'},
-  {no:79,name:'蓬莱泉 特別純米'},{no:80,name:'久保田 萬寿'},
-  {no:81,name:'越乃寒梅 白ラベル'},{no:82,name:'八海山 本醸造'},
-  {no:83,name:'〆張鶴 雪'},{no:84,name:'真澄 純米吟醸'},
-  {no:85,name:'菊正宗 本醸造'},{no:86,name:'白鶴 まる'},
-  {no:87,name:'月桂冠 上撰'},{no:88,name:'大関 上撰'},
-  {no:89,name:'松竹梅 上撰'},{no:90,name:'剣菱 本醸造'},
-  {no:91,name:'男山 本醸造'},{no:92,name:'高清水 本醸造'},
-  {no:93,name:'上善如水 純米吟醸'},{no:94,name:'浦霞 本醸造'},
-  {no:95,name:'秀よし 本醸造'},{no:96,name:'菊姫 山廃純米'},
-  {no:97,name:'高砂 本醸造'},{no:98,name:'千福 上撰'},
-  {no:99,name:'白牡丹 本醸造'},{no:100,name:'西條鶴 純米'},
-  {no:101,name:'賀茂鶴 上等'},{no:102,name:'富士錦 本醸造'},
-  {no:103,name:'三増 本醸造'},{no:104,name:'豊の梅 本醸造'},
-  {no:105,name:'喜久醉 特別純米'},{no:106,name:'国士無双 本醸造'},
-  {no:107,name:'日高見 本醸造'},{no:108,name:'鳳翔 本醸造'},
-  {no:109,name:'神杉 本醸造'},{no:110,name:'千寿 本醸造'},
-  {no:111,name:'豊盃 本醸造'},{no:112,name:'出羽鶴 本醸造'},
-  {no:113,name:'秋田誉 本醸造'},{no:114,name:'太平山 本醸造'},
-  {no:115,name:'両関 本醸造'},{no:116,name:'まんさくの花 本醸造'},
-  {no:117,name:'北鹿 本醸造'},{no:118,name:'こまちの里 本醸造'},
-  {no:119,name:'聖 本醸造'},{no:120,name:'南部美人 本醸造'},
-  {no:121,name:'桜顔 本醸造'},{no:122,name:'岩手誉 本醸造'},
-  {no:123,name:'あさ開 本醸造'},{no:124,name:'盛岡城 本醸造'},
-  {no:125,name:'喜多方 本醸造'},{no:126,name:'会津娘 純米'},
-  {no:127,name:'栄川 本醸造'},{no:128,name:'ねっか 本醸造'},
-  {no:129,name:'末廣 本醸造'},{no:130,name:'飛露喜 本醸造'},
+  {no:1,name:'獺祭 二割三分',pref:'山口県',desc:'精米歩合23%の最高峰。華やかで繊細な甘みと吟醸香。'},
+  {no:2,name:'獺祭 三割九分',pref:'山口県',desc:'フルーティで飲みやすい。獺祭入門にも最適な一本。'},
+  {no:3,name:'磯自慢 中取り純米大吟醸',pref:'静岡県',desc:'静岡の名水が育む端麗辛口。繊細な米の旨みが光る。'},
+  {no:4,name:'新政 No.6',pref:'秋田県',desc:'現代秋田酵母の代表格。爽やかな酸味と独特の世界観。'},
+  {no:5,name:'而今 純米吟醸',pref:'三重県',desc:'華やかな香りとフレッシュな旨み。現代的な日本酒の旗手。'},
+  {no:6,name:'飛露喜 特別純米',pref:'福島県',desc:'芳醇でしっかりした旨みが特徴。燗酒でも映える万能酒。'},
+  {no:7,name:'黒龍 純吟',pref:'福井県',desc:'洗練された吟醸香と透明感ある辛口。越前の銘酒。'},
+  {no:8,name:'十四代 本丸',pref:'山形県',desc:'幻の酒と称される入手困難な銘柄。甘旨みのバランス絶妙。'},
+  {no:9,name:'出羽桜 桜花吟醸',pref:'山形県',desc:'桜をイメージした華やかな香り。吟醸酒の草分け的存在。'},
+  {no:10,name:'くどき上手 純米大吟醸',pref:'山形県',desc:'フルーティで甘みが強い。女性にも人気の飲みやすい旨口。'},
+  {no:11,name:'田酒 特別純米',pref:'青森県',desc:'米の旨みをストレートに表現した純米酒の名作。'},
+  {no:12,name:'醸し人九平次',pref:'愛知県',desc:'フランスで高評価。ワインのような飲み方も楽しめる革新的な酒。'},
+  {no:13,name:'鍋島 特別純米',pref:'佐賀県',desc:'IWCで世界一を獲得した実力派。フルーティでキレ良し。'},
+  {no:14,name:'風の森 秋津穂',pref:'奈良県',desc:'無濾過生原酒でシュワっとした微発泡感が特徴的。'},
+  {no:15,name:'篠峯 純米吟醸',pref:'奈良県',desc:'奈良の老舗が醸す端正な純米吟醸。食中酒として最高。'},
+  {no:16,name:'悦凱陣 純米',pref:'香川県',desc:'個性的な旨みと酸が特徴。熱燗で化ける実力派。'},
+  {no:17,name:'仙禽 モダン仙禽',pref:'栃木県',desc:'テロワールを追求した自然派スタイル。複雑な酸味が魅力。'},
+  {no:18,name:'雨後の月 純米大吟醸',pref:'広島県',desc:'月明かりのような繊細さ。端麗でエレガントな広島酒。'},
+  {no:19,name:'一ノ蔵 特別純米',pref:'宮城県',desc:'宮城の豊かな水と米が生む穏やかな旨み。燗酒向き。'},
+  {no:20,name:'鳳凰美田 純米吟醸',pref:'栃木県',desc:'フルーティな香りが際立つ現代的な吟醸酒。'},
+  {no:21,name:'天の戸 純米',pref:'秋田県',desc:'秋田の自然米を使う。シンプルで米の旨みがストレートに出る。'},
+  {no:22,name:'三井の寿 純米大吟醸',pref:'福岡県',desc:'福岡を代表する洗練された純米大吟醸。軽やかで品がある。'},
+  {no:23,name:'農口尚彦研究所',pref:'石川県',desc:'杜氏の神様が手がける。伝統と革新が融合した芸術的な酒。'},
+  {no:24,name:'花巴 純米',pref:'奈良県',desc:'独自の乳酸発酵で醸す山廃系。複雑な旨みと酸が特徴。'},
+  {no:25,name:'貴 純米吟醸',pref:'山口県',desc:'山口の隠れた実力派。米の旨みと吟醸香のバランスが秀逸。'},
+  {no:26,name:'澤屋まつもと 守破離',pref:'京都府',desc:'京都伏見の老舗が醸す革新的ライン。洗練された旨口。'},
+  {no:27,name:'射美 純米',pref:'岐阜県',desc:'幻の酒米・美山錦を使用。入手困難だが飲む価値大。'},
+  {no:28,name:'姿 純米吟醸',pref:'栃木県',desc:'フルーティで優美な香り。さらりとした飲み口が特徴。'},
+  {no:29,name:'総乃寒紅梅 純米大吟醸',pref:'千葉県',desc:'千葉の大吟醸。梅の花のような華やかな香りと上品な甘み。'},
+  {no:30,name:'刈穂 純米超辛口',pref:'秋田県',desc:'日本酒度+14の超辛口。キレ抜群でスッキリ飲める。'},
+  {no:31,name:'山和 純米吟醸',pref:'宮城県',desc:'穏やかで上品な吟醸香。食事を引き立てる宮城の実力酒。'},
+  {no:32,name:'AKABU 純米',pref:'岩手県',desc:'若手蔵元が醸す爽やかな純米酒。フレッシュ感が際立つ。'},
+  {no:33,name:'一白水成 純米吟醸',pref:'秋田県',desc:'果実のような甘みと適度な酸。現代秋田酒の実力派。'},
+  {no:34,name:'開運 純米',pref:'静岡県',desc:'静岡酵母の特徴を体現。華やかで飲みやすい純米酒。'},
+  {no:35,name:'神亀 純米',pref:'埼玉県',desc:'純米酒復活の先駆者。熟成による深みのある旨みが魅力。'},
+  {no:36,name:'宝剣 純米',pref:'広島県',desc:'広島の辛口純米。スッキリしながら米の旨みがしっかり。'},
+  {no:37,name:'竹鶴 純米',pref:'広島県',desc:'自然農法の米を使う。複雑な旨みと酸の生酛系純米。'},
+  {no:38,name:'東一 純米吟醸',pref:'佐賀県',desc:'佐賀の隠れた名酒。穏やかな吟醸香と柔らかな口当たり。'},
+  {no:39,name:'萩の鶴 純米吟醸',pref:'宮城県',desc:'フルーティで飲みやすい宮城の吟醸。猫ラベルでも人気。'},
+  {no:40,name:'作 純米吟醸',pref:'三重県',desc:'IWCで金賞を受賞した三重の実力派。スムーズな飲み口。'},
+  {no:41,name:'王祿 純米吟醸',pref:'島根県',desc:'生酛造りの個性的な酸が特徴。食中酒として秀逸。'},
+  {no:42,name:'みむろ杉 純米吟醸',pref:'奈良県',desc:'三輪大社の地で醸す。爽やかな香りと上品な甘み。'},
+  {no:43,name:'松の司 純米大吟醸',pref:'滋賀県',desc:'琵琶湖の伏流水が育む。繊細で品格ある滋賀の大吟醸。'},
+  {no:44,name:'天青 純米吟醸',pref:'神奈川県',desc:'湘南の地酒。穏やかな吟醸香と柔らかい旨みが特徴。'},
+  {no:45,name:'南方 純米吟醸',pref:'和歌山県',desc:'熊野古道の清水で醸す。フルーティな香りと爽やかな旨み。'},
+  {no:46,name:'花陽浴 純米大吟醸',pref:'埼玉県',desc:'幻の埼玉酒。パイナップルのような甘い香りが個性的。'},
+  {no:47,name:'奥能登の白菊 純米',pref:'石川県',desc:'能登の自然が生む素朴な旨み。震災後も復活した不屈の酒。'},
+  {no:48,name:'常きげん 山廃純米',pref:'石川県',desc:'加賀の山廃の代表格。コクと旨みが濃厚で燗酒映えする。'},
+  {no:49,name:'五凛 純米',pref:'石川県',desc:'菊姫の姉妹ブランド。程よい旨みとキレのある辛口純米。'},
+  {no:50,name:'福小町 純米大吟醸',pref:'秋田県',desc:'秋田の女性的な優しい味わい。フルーティで上品な甘旨み。'},
+  {no:51,name:'ひたち錦 純米大吟醸',pref:'茨城県',desc:'茨城の実力派大吟醸。華やかな香りとスッキリした後味。'},
+  {no:52,name:'鶴齢 純米吟醸',pref:'新潟県',desc:'越後の辛口を体現しつつ吟醸香も楽しめる万能酒。'},
+  {no:53,name:'七田 純米',pref:'佐賀県',desc:'天山山系の清水が生む。ふくよかな旨みと穏やかな香り。'},
+  {no:54,name:'根知男山 純米',pref:'新潟県',desc:'自家栽培米を使う山間の地酒。力強い旨みが特徴。'},
+  {no:55,name:'信濃錦 純米',pref:'長野県',desc:'南アルプスの伏流水で醸す。米の旨みが素直に出た純米。'},
+  {no:56,name:'赤武 純米',pref:'岩手県',desc:'岩手の若手蔵が醸すモダンスタイル。果実的な香りが人気。'},
+  {no:57,name:'喜楽長 純米吟醸',pref:'滋賀県',desc:'琵琶湖畔の蔵元。柔らかい水が生む優しい吟醸の味わい。'},
+  {no:58,name:'三重錦 純米',pref:'三重県',desc:'三重の地酒として地元に愛される純米酒。食中酒に最適。'},
+  {no:59,name:'出雲富士 純米吟醸',pref:'島根県',desc:'富士山をイメージした雄大な旨み。島根の実力酒。'},
+  {no:60,name:'くれはなし 純米',pref:'広島県',desc:'広島の穏やかで柔らかな純米酒。日常の食卓に寄り添う一本。'},
+  {no:61,name:'彩來 純米吟醸',pref:'滋賀県',desc:'近江の米と水が生む色彩豊かな吟醸。フルーティで親しみやすい。'},
+  {no:62,name:'白瀑 純米',pref:'秋田県',desc:'秋田らしいふくよかな旨みと程よい甘み。ラベルも個性的。'},
+  {no:63,name:'千代の亀 純米大吟醸',pref:'愛媛県',desc:'愛媛の最高峰。華やかな香りと上品な甘みが素晴らしい。'},
+  {no:64,name:'豊盃 純米吟醸',pref:'青森県',desc:'青森の銘醸。フルーティな香りとコクのある旨みが絶妙。'},
+  {no:65,name:'七本槍 純米',pref:'滋賀県',desc:'近江の伝統を守る純米酒。やや辛口でキレが良い。'},
+  {no:66,name:'臥龍梅 純米大吟醸',pref:'静岡県',desc:'静岡の技術が光る端麗な大吟醸。洗練された香りが特徴。'},
+  {no:67,name:'天狗舞 山廃純米',pref:'石川県',desc:'能登の山廃の雄。力強いコクと複雑な旨みが特徴的。'},
+  {no:68,name:'大那 純米吟醸',pref:'栃木県',desc:'那須高原の清水で醸す。穏やかで食中酒向きの吟醸。'},
+  {no:69,name:'津島屋 純米',pref:'岐阜県',desc:'岐阜の地酒。米の旨みがしっかりしており飲み飽きしない。'},
+  {no:70,name:'早瀬浦 純米',pref:'福井県',desc:'若狭の海の幸に合わせた純米酒。辛口で食中酒に最適。'},
+  {no:71,name:'酔鯨 純米吟醸',pref:'高知県',desc:'高知の豪快な飲み文化を体現。しっかりした辛口吟醸。'},
+  {no:72,name:'香住鶴 純米',pref:'兵庫県',desc:'日本海の港町で醸す。山廃で仕込んだ旨みのある純米酒。'},
+  {no:73,name:'剣菱 瑞穂',pref:'兵庫県',desc:'剣菱の最高峰。500年の歴史が生む圧倒的なコクと旨み。'},
+  {no:74,name:'渓 純米吟醸',pref:'長野県',desc:'木曽の自然水で醸す山間の地酒。清涼感ある吟醸香。'},
+  {no:75,name:'望 純米大吟醸',pref:'宮城県',desc:'宮城の大吟醸。穏やかな香りと柔らかな旨みが特徴。'},
+  {no:76,name:'雪の茅舎 純米吟醸',pref:'秋田県',desc:'自然の乳酸を使う山廃系。秋田らしいふくよかな旨み。'},
+  {no:77,name:'福千歳 純米',pref:'石川県',desc:'能登の小さな蔵の純米酒。米の旨みがしっかりした食中酒。'},
+  {no:78,name:'るみ子の酒 純米',pref:'三重県',desc:'伊賀の自然農法米で造る個性派。チャーミングなラベルも人気。'},
+  {no:79,name:'蓬莱泉 特別純米',pref:'愛知県',desc:'奥三河の山水が育む。口に広がるまろやかで豊かな旨み。'},
+  {no:80,name:'久保田 萬寿',pref:'新潟県',desc:'越後の最高峰。端麗な中にも深みがある新潟酒の頂点。'},
+  {no:81,name:'越乃寒梅 白ラベル',pref:'新潟県',desc:'一世を風靡した新潟辛口酒の象徴。すっきりして飲みやすい。'},
+  {no:82,name:'八海山 本醸造',pref:'新潟県',desc:'新潟の代表銘柄。淡麗辛口の手本のような酒質。'},
+  {no:83,name:'〆張鶴 雪',pref:'新潟県',desc:'雪国を体現した純白の辛口。洗練された飲み口が特徴。'},
+  {no:84,name:'真澄 純米吟醸',pref:'長野県',desc:'諏訪の名水が生む。協会7号酵母発祥の蔵の吟醸酒。'},
+  {no:85,name:'菊正宗 本醸造',pref:'兵庫県',desc:'灘の辛口代表格。キリリとした辛口は燗酒でも楽しめる。'},
+  {no:86,name:'白鶴 まる',pref:'兵庫県',desc:'全国区の灘の酒。燗冷ましでも美味しい食卓の定番酒。'},
+  {no:87,name:'月桂冠 上撰',pref:'京都府',desc:'伏見の老舗酒蔵。まろやかで飲みやすい京都の地酒。'},
+  {no:88,name:'大関 上撰',pref:'兵庫県',desc:'灘の老舗。クセがなく食事に合わせやすい定番の本醸造。'},
+  {no:89,name:'松竹梅 上撰',pref:'京都府',desc:'宝酒造の代表銘柄。コスパ良く飲みやすい大衆酒の定番。'},
+  {no:90,name:'剣菱 本醸造',pref:'兵庫県',desc:'400年以上変わらない重厚なコクと旨み。日本酒の伝統の一端。'},
+  {no:91,name:'男山 本醸造',pref:'北海道',desc:'北海道を代表する辛口酒。冷涼な気候が生む爽快な味わい。'},
+  {no:92,name:'高清水 本醸造',pref:'秋田県',desc:'秋田の定番本醸造。旨みとキレのバランスが良い食中酒。'},
+  {no:93,name:'上善如水 純米吟醸',pref:'新潟県',desc:'「水のように善し」の通り超淡麗。日本酒初心者にも飲みやすい。'},
+  {no:94,name:'浦霞 本醸造',pref:'宮城県',desc:'三陸の海に近い蔵元。穏やかで食事に合わせやすい本醸造。'},
+  {no:95,name:'秀よし 本醸造',pref:'秋田県',desc:'角館の地酒。秋田らしいふくよかな旨みある本醸造。'},
+  {no:96,name:'菊姫 山廃純米',pref:'石川県',desc:'山廃仕込みの雄。力強い旨みと酸が特徴の重厚なスタイル。'},
+  {no:97,name:'高砂 本醸造',pref:'静岡県',desc:'富士山の伏流水で醸す。すっきりした辛口の本醸造。'},
+  {no:98,name:'千福 上撰',pref:'広島県',desc:'広島の定番酒。穏やかな旨みで食中酒として幅広い料理に合う。'},
+  {no:99,name:'白牡丹 本醸造',pref:'広島県',desc:'西条の四蔵の一つ。柔らかい広島の水が生む本醸造。'},
+  {no:100,name:'西條鶴 純米',pref:'広島県',desc:'酒都西条の蔵元。米の旨みがしっかりした純米酒。'},
+  {no:101,name:'賀茂鶴 上等',pref:'広島県',desc:'西条の老舗。伝統的な製法で醸す品格ある本醸造。'},
+  {no:102,name:'富士錦 本醸造',pref:'静岡県',desc:'富士山麓の湧水で醸す。軽快で飲みやすい静岡の本醸造。'},
+  {no:103,name:'三増 本醸造',pref:'茨城県',desc:'茨城の地酒。コクと旨みある飲み応えのある本醸造。'},
+  {no:104,name:'豊の梅 本醸造',pref:'高知県',desc:'土佐の酒らしい辛口本醸造。食事に合わせやすく飲みやすい。'},
+  {no:105,name:'喜久醉 特別純米',pref:'静岡県',desc:'静岡の実力派。穏やかな香りと旨みが際立つ特別純米。'},
+  {no:106,name:'国士無双 本醸造',pref:'北海道',desc:'北海道の代表的辛口酒。スッキリした飲み口が特徴。'},
+  {no:107,name:'日高見 本醸造',pref:'宮城県',desc:'三陸の地酒。辛口でキレ良く魚介との相性が抜群。'},
+  {no:108,name:'鳳翔 本醸造',pref:'栃木県',desc:'栃木の地酒。程よい旨みとスッキリした後味が特徴。'},
+  {no:109,name:'神杉 本醸造',pref:'愛知県',desc:'愛知の地酒。爽やかな辛口本醸造で食中酒として使いやすい。'},
+  {no:110,name:'千寿 本醸造',pref:'埼玉県',desc:'埼玉の銘酒。穏やかな旨みとスッキリした飲み口が特徴。'},
+  {no:111,name:'豊盃 本醸造',pref:'青森県',desc:'青森の安定した本醸造。純米吟醸とは異なるしっかりした旨み。'},
+  {no:112,name:'出羽鶴 本醸造',pref:'秋田県',desc:'秋田の地酒。米どころ秋田らしいふくよかな本醸造。'},
+  {no:113,name:'秋田誉 本醸造',pref:'秋田県',desc:'秋田の誉れ高き本醸造。バランスよく飲みやすい。'},
+  {no:114,name:'太平山 本醸造',pref:'秋田県',desc:'太平山を仰ぐ蔵元。辛口でキレのある秋田らしい本醸造。'},
+  {no:115,name:'両関 本醸造',pref:'秋田県',desc:'明治創業の老舗。穏やかで飲み飽きしない食中酒の定番。'},
+  {no:116,name:'まんさくの花 本醸造',pref:'秋田県',desc:'秋田の春を彩るまんさくの花にちなむ。飲みやすい本醸造。'},
+  {no:117,name:'北鹿 本醸造',pref:'秋田県',desc:'大館の地酒。すっきりした飲み口の秋田らしい本醸造。'},
+  {no:118,name:'こまちの里 本醸造',pref:'秋田県',desc:'秋田小町米を使用。米の甘みを活かした親しみやすい本醸造。'},
+  {no:119,name:'聖 本醸造',pref:'群馬県',desc:'上州の地酒。キリリとした辛口で食中酒として幅広く使える。'},
+  {no:120,name:'南部美人 本醸造',pref:'岩手県',desc:'岩手の代表銘柄。IWC受賞の実力を持つ南部地方の地酒。'},
+  {no:121,name:'桜顔 本醸造',pref:'岩手県',desc:'盛岡の蔵元。穏やかな旨みと優しい飲み口が特徴的。'},
+  {no:122,name:'岩手誉 本醸造',pref:'岩手県',desc:'岩手の誇りある本醸造。米の旨みを素直に表現した一本。'},
+  {no:123,name:'あさ開 本醸造',pref:'岩手県',desc:'岩手山の伏流水で醸す。爽やかで飲みやすい岩手の地酒。'},
+  {no:124,name:'盛岡城 本醸造',pref:'岩手県',desc:'城下町盛岡の地酒。すっきりした辛口でどんな料理にも合う。'},
+  {no:125,name:'喜多方 本醸造',pref:'福島県',desc:'ラーメンの街の地酒。旨みがあり食事との相性が良い。'},
+  {no:126,name:'会津娘 純米',pref:'福島県',desc:'会津の山の水と米が生む。素朴でふくよかな純米酒。'},
+  {no:127,name:'栄川 本醸造',pref:'福島県',desc:'磐梯山の清水で醸す会津の地酒。まろやかで飲みやすい。'},
+  {no:128,name:'ねっか 本醸造',pref:'福島県',desc:'奥会津の自然が生む。地域の食材に合わせた旨みある本醸造。'},
+  {no:129,name:'末廣 本醸造',pref:'福島県',desc:'会津の老舗。伝統的な製法で醸す端正な本醸造。'},
+  {no:130,name:'飛露喜 本醸造',pref:'福島県',desc:'特別純米と異なる個性。飛露喜ファン必飲の本醸造スタイル。'},
 ];
 
 // ============================================================
 // 状態
 // ============================================================
 let members=[];
-let records={};       // {no: {checked:{mid:bool}, rating, tags, shop, note}}
+let records={};
 let currentUserId=null;
 let currentCatFilter='all';
 let currentListFilter='all';
 let currentDetailNo=null;
 let selectedAvatarId='a1';
+let realtimeChannel=null;
+let pollingTimer=null;
 
 // ============================================================
 // ヘルパー
 // ============================================================
-function getAvatar(id){for(const g of AVATAR_GROUPS){const a=g.avatars.find(x=>x.id===id);if(a)return a;}return AVATAR_GROUPS[0].avatars[0];}
-function avatarSvg(id,size=40){const a=getAvatar(id);return`<div style="width:${size}px;height:${size}px;display:flex;align-items:center;justify-content:center;">${a.svg}</div>`;}
-function getRecord(no){return records[no]||{checked:{},rating:0,tags:[],shop:'',note:''};}
-function getDrunkCount(no){return members.filter(m=>getRecord(no).checked[m.id]).length;}
-function getAvgRating(no){return getRecord(no).rating||0;}
-function starsHTML(n){return'★'.repeat(n)+'☆'.repeat(5-n);}
-function getMemberDrunkCount(mid){return SAKE_DATA.filter(s=>getRecord(s.no).checked[mid]).length;}
+const getAvatar=id=>{for(const g of AVATAR_GROUPS){const a=g.avatars.find(x=>x.id===id);if(a)return a;}return AVATAR_GROUPS[0].avatars[0];};
+const avatarSvg=(id,size=40)=>`<div style="width:${size}px;height:${size}px;display:flex;align-items:center;justify-content:center;">${getAvatar(id).svg}</div>`;
+const getRecord=no=>records[no]||{checked:{},rating:0,tags:[],shop:'',note:''};
+const getDrunkCount=no=>members.filter(m=>getRecord(no).checked[m.id]).length;
+const getAvgRating=no=>getRecord(no).rating||0;
+const starsHTML=n=>'★'.repeat(n)+'☆'.repeat(5-n);
+const getMemberDrunkCount=mid=>SAKE_DATA.filter(s=>getRecord(s.no).checked[mid]).length;
+const getMemberColor=i=>['#C17F3B','#639922','#378ADD','#D4537E','#1D9E75','#7F77DD','#D85A30','#BA7517'][i%8];
+const getCat=no=>no<=39?'t1':no<=79?'t2':no<=105?'t3':'t4';
 
-function showLoading(msg='処理中...'){document.getElementById('loading-msg').textContent=msg;document.getElementById('loading-overlay').classList.add('show');}
-function hideLoading(){document.getElementById('loading-overlay').classList.remove('show');}
-function setSyncStatus(type,msg){document.getElementById('sync-dot').className='sync-dot '+type;document.getElementById('sync-label').textContent=msg;}
+function setSyncStatus(type,msg){
+  document.getElementById('sync-dot').className='sync-dot '+type;
+  document.getElementById('sync-label').textContent=msg;
+}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2000);
+}
+function showError(){
+  document.getElementById('error-screen').classList.add('show');
+}
 
 // ============================================================
 // Supabase CRUD
 // ============================================================
 async function loadAllData(){
-  setSyncStatus('wait','読込中...');
+  setSyncStatus('wait','読込中');
   try{
     const [mRows,rRows]=await Promise.all([
       sbFetch('members?select=*&order=created_at'),
       sbFetch('records?select=*'),
     ]);
     members=mRows;
-    records={};
-    for(const r of rRows){
-      if(!records[r.sake_no])records[r.sake_no]={checked:{},rating:r.rating||0,tags:r.tags?r.tags.split(',').filter(t=>t):[],shop:r.shop||'',note:r.note||''};
-      records[r.sake_no].checked[r.member_id]=r.drunk||false;
-      if(r.rating)records[r.sake_no].rating=r.rating;
-      if(r.tags)records[r.sake_no].tags=r.tags.split(',').filter(t=>t);
-      if(r.shop)records[r.sake_no].shop=r.shop;
-      if(r.note)records[r.sake_no].note=r.note;
-    }
-    setSyncStatus('ok','同期済み ✓');
+    buildRecords(rRows);
+    setSyncStatus('ok','同期済み');
+    return true;
   }catch(e){
+    console.error('loadAllData error:',e);
     setSyncStatus('ng','接続エラー');
-    console.error(e);
+    return false;
+  }
+}
+
+function buildRecords(rRows){
+  records={};
+  for(const r of rRows){
+    const no=r.sake_no;
+    if(!records[no])records[no]={checked:{},rating:0,tags:[],shop:'',note:''};
+    records[no].checked[r.member_id]=r.drunk||false;
+    if(r.rating)records[no].rating=r.rating;
+    if(r.tags)records[no].tags=r.tags.split(',').filter(t=>t);
+    if(r.shop)records[no].shop=r.shop;
+    if(r.note)records[no].note=r.note;
   }
 }
 
 async function upsertRecord(no){
   const r=getRecord(no);
-  const me=members.find(m=>m.id===currentUserId);
-  if(!me)return;
   try{
-    await sbFetch('records',{
+    const res=await fetch(SB_URL+'/rest/v1/records',{
       method:'POST',
-      headers:{'Prefer':'resolution=merge-duplicates'},
+      headers:{
+        'apikey':SB_KEY,
+        'Authorization':'Bearer '+SB_KEY,
+        'Content-Type':'application/json',
+        'Prefer':'resolution=merge-duplicates,return=minimal',
+      },
       body:JSON.stringify({
         sake_no:no,
         member_id:currentUserId,
@@ -678,40 +843,78 @@ async function upsertRecord(no){
         note:r.note||'',
       })
     });
-    setSyncStatus('ok','保存完了 ✓ '+new Date().toLocaleTimeString('ja-JP'));
+    if(!res.ok){const e=await res.text();throw new Error(res.status+': '+e);}
+    setSyncStatus('ok','保存済み ✓');
+    return true;
   }catch(e){
-    setSyncStatus('ng','保存エラー');
-    console.error(e);
+    console.error('upsert error:',e);
+    setSyncStatus('ng','保存失敗');
+    return false;
   }
 }
 
-async function addMemberToDb(member){
-  await sbFetch('members',{method:'POST',body:JSON.stringify(member)});
+// ============================================================
+// Supabase Realtime
+// ============================================================
+function startRealtime(){
+  if(realtimeChannel)return;
+  try{
+    const ws=new WebSocket(`wss://rtvsncbpsatgjshxzzqp.supabase.co/realtime/v1/websocket?apikey=${SB_KEY}&vsn=1.0.0`);
+    ws.onopen=()=>{
+      ws.send(JSON.stringify({topic:'realtime:public:records',event:'phx_join',payload:{},ref:'1'}));
+      ws.send(JSON.stringify({topic:'realtime:public:members',event:'phx_join',payload:{},ref:'2'}));
+    };
+    ws.onmessage=async(e)=>{
+      const msg=JSON.parse(e.data);
+      if(msg.event==='INSERT'||msg.event==='UPDATE'||msg.event==='DELETE'){
+        await loadAllData();
+        renderAll();
+        showToast('🔄 データが更新されました');
+      }
+    };
+    ws.onerror=()=>startPolling();
+    ws.onclose=()=>{realtimeChannel=null;startPolling();}
+    realtimeChannel=ws;
+  }catch(e){startPolling();}
 }
 
-async function deleteMemberFromDb(id){
-  await sbFetch('members?id=eq.'+id,{method:'DELETE'});
-  await sbFetch('records?member_id=eq.'+id,{method:'DELETE'});
+function startPolling(){
+  if(pollingTimer)return;
+  pollingTimer=setInterval(async()=>{
+    const ok=await loadAllData();
+    if(ok)renderAll();
+  },30000);
 }
+
+// ============================================================
+// ローカルストレージ（ユーザーID保持）
+// ============================================================
+const LS_KEY='sake_checker_user_id';
+function saveUserId(id){localStorage.setItem(LS_KEY,id);}
+function loadUserId(){return localStorage.getItem(LS_KEY);}
+function clearUserId(){localStorage.removeItem(LS_KEY);}
 
 // ============================================================
 // User Select
 // ============================================================
 function initUserSelect(){
   const ul=document.getElementById('us-members-list');
-  ul.innerHTML=members.map(m=>`
-    <div class="us-member" id="usm-${m.id}" onclick="selectUserMember('${m.id}')">
-      <div>${avatarSvg(m.avatar_id,40)}</div>
-      <div class="us-m-name">${m.name}</div>
-    </div>`).join('');
+  ul.innerHTML=members.map(m=>{
+    const cnt=getMemberDrunkCount(m.id);
+    const title=getTitle(cnt);
+    return`<div class="us-member" id="usm-${m.id}" onclick="selectUserMember('${m.id}')">
+      <div>${avatarSvg(m.avatar_id,44)}</div>
+      <div><div class="us-m-name">${m.name}</div><div class="us-m-title">${title.title} · ${cnt}本</div></div>
+    </div>`;
+  }).join('');
   renderAvatarPicker('us-av-groups','us-av-btn');
+  document.getElementById('us-start-btn').disabled=true;
 }
 
 function selectUserMember(id){
   currentUserId=id;
   document.querySelectorAll('.us-member').forEach(el=>el.classList.remove('selected'));
-  const el=document.getElementById('usm-'+id);
-  if(el)el.classList.add('selected');
+  document.getElementById('usm-'+id)?.classList.add('selected');
   document.getElementById('us-new-form').style.display='none';
   document.getElementById('us-start-btn').disabled=false;
 }
@@ -721,62 +924,60 @@ function toggleNewForm(){
   document.querySelectorAll('.us-member').forEach(el=>el.classList.remove('selected'));
   const f=document.getElementById('us-new-form');
   f.style.display=f.style.display==='block'?'none':'block';
-  document.getElementById('us-start-btn').disabled=!document.getElementById('us-new-name').value.trim();
+  checkStartBtn();
 }
 
-document.addEventListener('DOMContentLoaded',()=>{
-  const inp=document.getElementById('us-new-name');
-  if(inp)inp.addEventListener('input',()=>{
-    document.getElementById('us-start-btn').disabled=!inp.value.trim();
-  });
-});
+function checkStartBtn(){
+  const newName=document.getElementById('us-new-name')?.value.trim();
+  document.getElementById('us-start-btn').disabled=!currentUserId&&!newName;
+}
 
 async function startApp(){
   const newName=document.getElementById('us-new-name').value.trim();
   if(!currentUserId&&!newName){alert('メンバーを選ぶか、名前を入力してください');return;}
   if(newName){
-    showLoading('メンバーを登録中...');
     const id='m_'+Date.now();
-    const member={id,name:newName,avatar_id:selectedAvatarId};
     try{
-      await addMemberToDb(member);
-      members.push(member);
+      await sbFetch('members',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify({id,name:newName,avatar_id:selectedAvatarId})});
+      members.push({id,name:newName,avatar_id:selectedAvatarId});
       currentUserId=id;
-    }catch(e){hideLoading();alert('登録エラー: '+e.message);return;}
-    hideLoading();
+    }catch(e){alert('登録エラー: '+e.message);return;}
   }
+  saveUserId(currentUserId);
   document.getElementById('user-select').classList.remove('show');
   document.getElementById('app').style.display='flex';
   renderAll();
+  startRealtime();
 }
 
-function logout(){
-  if(!confirm('ユーザーを切り替えますか？'))return;
+function switchUserPrompt(){
+  if(!confirm('ユーザーを切り替えますか？')){return;}
+  clearUserId();
   currentUserId=null;
+  realtimeChannel=null;
+  if(pollingTimer){clearInterval(pollingTimer);pollingTimer=null;}
   document.getElementById('app').style.display='none';
-  document.getElementById('user-select').classList.add('show');
   initUserSelect();
+  document.getElementById('user-select').classList.add('show');
 }
 
 // ============================================================
 // Avatar Picker
 // ============================================================
 function renderAvatarPicker(containerId,btnClass){
-  const el=document.getElementById(containerId);
-  if(!el)return;
+  const el=document.getElementById(containerId);if(!el)return;
   const isUs=containerId==='us-av-groups';
   el.innerHTML=AVATAR_GROUPS.map(g=>`
     <div class="${isUs?'us-av-group':'am-av-group'}">
       <div class="${isUs?'us-av-group-label':'am-av-group-label'}">${g.label}</div>
       <div class="${isUs?'us-av-row':'am-av-row'}">
-        ${g.avatars.map(a=>`<div class="av-btn ${a.id===selectedAvatarId?'sel':''}" id="${btnClass}-${a.id}" onclick="selectAvatar('${a.id}','${btnClass}')" title="${a.label}">${a.svg}</div>`).join('')}
+        ${g.avatars.map(a=>`<div class="av-btn ${a.id===selectedAvatarId?'sel':''}" id="${btnClass}-${a.id}" onclick="selectAvatar('${a.id}','${btnClass}')">${a.svg}</div>`).join('')}
       </div>
     </div>`).join('');
 }
 function selectAvatar(id,cls){
   selectedAvatarId=id;
   document.querySelectorAll('.av-btn').forEach(b=>b.classList.remove('sel'));
-  document.querySelectorAll('#'+cls.replace('btn','')+'-'+id+', [id="'+cls+'-'+id+'"]').forEach(b=>b.classList.add('sel'));
   document.getElementById(cls+'-'+id)?.classList.add('sel');
 }
 
@@ -801,29 +1002,32 @@ function renderAll(){
   updateHeader();
   renderSidebar();
   renderRightPanel();
-  renderHome();
+  const activeScreen=document.querySelector('.screen.active');
+  const screenId=activeScreen?.id||'screen-home';
+  if(screenId==='screen-home')renderHome();
+  if(screenId==='screen-list')renderList();
+  if(screenId==='screen-members')renderMembersScreen();
+  if(screenId==='screen-stats')renderStats();
 }
 
 function updateHeader(){
-  const me=members.find(m=>m.id===currentUserId);
-  if(!me)return;
-  document.getElementById('hdr-user-av').innerHTML=avatarSvg(me.avatar_id,22);
-  document.getElementById('hdr-user-name').textContent=me.name+' さん';
+  const me=members.find(m=>m.id===currentUserId);if(!me)return;
+  document.getElementById('hdr-user-av').innerHTML=avatarSvg(me.avatar_id,20);
+  document.getElementById('hdr-user-name').textContent=me.name;
   const drunk=SAKE_DATA.filter(s=>getDrunkCount(s.no)>0).length;
   const pct=Math.round(drunk/SAKE_DATA.length*100);
   document.getElementById('hdr-prog-fill').style.width=pct+'%';
-  document.getElementById('hdr-prog-txt').textContent=drunk+' / '+SAKE_DATA.length+' 銘柄';
+  document.getElementById('hdr-prog-txt').textContent=drunk+'/130';
 }
 
 function renderSidebar(){
-  const me=members.find(m=>m.id===currentUserId);
-  if(!me)return;
+  const me=members.find(m=>m.id===currentUserId);if(!me)return;
   const cnt=getMemberDrunkCount(me.id);
   const title=getTitle(cnt);
   const ar=SAKE_DATA.filter(s=>getRecord(s.no).checked[me.id]&&getRecord(s.no).rating>0);
   const avg=ar.length?(ar.reduce((a,s)=>a+getRecord(s.no).rating,0)/ar.length).toFixed(1):'-';
   document.getElementById('sb-user').innerHTML=`
-    <div class="sb-avatar">${avatarSvg(me.avatar_id,52)}</div>
+    <div class="sb-avatar">${avatarSvg(me.avatar_id,48)}</div>
     <div class="sb-name">${me.name} さん</div>
     <span class="sb-badge">${title.title}</span>
     <div class="sb-comment">${title.comment}</div>
@@ -833,7 +1037,7 @@ function renderSidebar(){
     </div>`;
   document.getElementById('sb-member-chips').innerHTML=members.map(m=>`
     <div class="sb-m-chip ${m.id===currentUserId?'active-user':''}">
-      <div class="sb-m-av">${avatarSvg(m.avatar_id,24)}</div>
+      <div class="sb-m-av">${avatarSvg(m.avatar_id,22)}</div>
       <div><div class="sb-m-name">${m.name}</div><div class="sb-m-cnt">${getMemberDrunkCount(m.id)}本</div></div>
     </div>`).join('');
 }
@@ -843,8 +1047,7 @@ function renderRightPanel(){
   const ar=drunk.filter(s=>getAvgRating(s.no)>0);
   const avg=ar.length?(ar.reduce((a,s)=>a+getAvgRating(s.no),0)/ar.length).toFixed(1):'-';
   document.getElementById('rp-stat-grid').innerHTML=[
-    {num:drunk.length+'/130',label:'制覇数'},
-    {num:avg+'★',label:'平均評価'},
+    {num:drunk.length+'/130',label:'制覇数'},{num:avg+'★',label:'平均評価'},
     {num:SAKE_DATA.filter(s=>getCat(s.no)==='t1'&&getDrunkCount(s.no)>0).length+'/39',label:'M.エレガント'},
     {num:SAKE_DATA.filter(s=>getCat(s.no)==='t2'&&getDrunkCount(s.no)>0).length+'/40',label:'M.シック'},
     {num:SAKE_DATA.filter(s=>getCat(s.no)==='t3'&&getDrunkCount(s.no)>0).length+'/26',label:'C.リッチ'},
@@ -856,26 +1059,35 @@ function renderRightPanel(){
 }
 
 // ============================================================
-// Sake Card/Row
+// Sake Card HTML
 // ============================================================
 function sakeCardHTML(s){
   const r=getRecord(s.no);const cat=getCat(s.no);
   const checks=members.map((m,i)=>`<div class="sc-dot" style="background:${r.checked[m.id]?getMemberColor(i):'#E8D5B5'};"></div>`).join('');
-  return`<div class="sake-card" onclick="openDetail(${s.no})">
-    <span class="sc-cat ${cat}">${CAT_INFO[cat].label}</span>
-    <div class="sc-num">No.${String(s.no).padStart(3,'0')}</div>
-    <div class="sc-name">${s.name}</div>
-    <div class="sc-checks">${checks}</div>
-    <div class="sc-stars">${r.rating?starsHTML(r.rating):'<span style="color:#D4B896;font-size:9px;">未評価</span>'}</div>
+  const imgSection=`<div class="sake-card-noimg"><div class="sc-desc">${s.desc}</div></div>`;
+  return`<div class="sake-card" onclick="openQuick(${s.no})">
+    ${imgSection}
+    <div class="sake-card-info">
+      <span class="sc-cat ${cat}">${CAT_INFO[cat].label}</span>
+      <div class="sc-num">No.${String(s.no).padStart(3,'0')}</div>
+      <div class="sc-name">${s.name}</div>
+      <div class="sc-pref">📍 ${s.pref}</div>
+      <div class="sc-checks">${checks}</div>
+      <div class="sc-stars">${r.rating?starsHTML(r.rating):'<span style="color:#D4B896;font-size:8px;">未評価</span>'}</div>
+    </div>
   </div>`;
 }
-function sakeRowHTML(s){
+
+function sakeListItemHTML(s){
   const r=getRecord(s.no);const cat=getCat(s.no);
-  const checks=members.map((m,i)=>`<div class="sr-dot" style="background:${r.checked[m.id]?getMemberColor(i):'#E8D5B5'};"></div>`).join('');
-  return`<div class="sake-row-item" onclick="openDetail(${s.no})">
-    <div class="sr-num">No.${String(s.no).padStart(3,'0')}</div>
-    <div class="sr-info"><div class="sr-name">${s.name}</div><div class="sr-meta">${CAT_INFO[cat].label}</div></div>
-    <div class="sr-right"><div class="sr-checks">${checks}</div><div class="sr-stars">${r.rating?starsHTML(r.rating):'<span style="color:#D4B896;font-size:9px;">未評価</span>'}</div></div>
+  const checks=members.map((m,i)=>`<div class="sli-dot" style="background:${r.checked[m.id]?getMemberColor(i):'#E8D5B5'};"></div>`).join('');
+  return`<div class="sake-list-item" onclick="openQuick(${s.no})">
+    <div class="sli-num">No.${String(s.no).padStart(3,'0')}</div>
+    <div class="sli-info">
+      <div class="sli-name">${s.name}</div>
+      <div class="sli-sub"><span style="font-size:8px;padding:1px 4px;border-radius:3px;" class="sc-cat ${cat}">${CAT_INFO[cat].label}</span> 📍${s.pref}</div>
+    </div>
+    <div class="sli-right"><div class="sli-checks">${checks}</div><div class="sli-stars">${r.rating?starsHTML(r.rating):'<span style="color:#D4B896;">未評価</span>'}</div></div>
   </div>`;
 }
 
@@ -884,21 +1096,20 @@ function sakeRowHTML(s){
 // ============================================================
 function setCatFilter(cat,btn){
   currentCatFilter=cat;
-  document.querySelectorAll('.cat-tab').forEach(b=>b.classList.remove('active-cat'));
+  document.querySelectorAll('#home-cat-tabs .cat-tab').forEach(b=>b.classList.remove('active-cat'));
   if(btn)btn.classList.add('active-cat');
   renderHome();
 }
+
 function renderHome(){
   document.getElementById('home-member-row').innerHTML=members.map((m,i)=>`
     <div class="m-chip ${m.id===currentUserId?'me':''}">
-      <div class="m-av">${avatarSvg(m.avatar_id,28)}</div>
+      <div class="m-av">${avatarSvg(m.avatar_id,26)}</div>
       <div><div class="m-name">${m.name}</div><div class="m-cnt">${getMemberDrunkCount(m.id)}本</div></div>
     </div>`).join('');
   let sakes=SAKE_DATA;
   if(currentCatFilter!=='all')sakes=sakes.filter(s=>getCat(s.no)===currentCatFilter);
   document.getElementById('home-sake-grid').innerHTML=sakes.map(sakeCardHTML).join('');
-  document.getElementById('home-sake-list').innerHTML=sakes.map(sakeRowHTML).join('');
-  updateHeader();renderRightPanel();renderSidebar();
 }
 
 // ============================================================
@@ -915,10 +1126,9 @@ function renderList(){
   let sakes=SAKE_DATA;
   if(['t1','t2','t3','t4'].includes(currentListFilter))sakes=sakes.filter(s=>getCat(s.no)===currentListFilter);
   else if(currentListFilter==='drunk')sakes=sakes.filter(s=>getDrunkCount(s.no)>0);
-  if(q)sakes=sakes.filter(s=>s.name.toLowerCase().includes(q));
+  if(q)sakes=sakes.filter(s=>s.name.toLowerCase().includes(q)||s.pref.includes(q));
   const lbl=document.getElementById('list-count');if(lbl)lbl.textContent=sakes.length+'件';
-  document.getElementById('list-sake-grid').innerHTML=sakes.map(sakeCardHTML).join('');
-  document.getElementById('list-sake-list').innerHTML=sakes.map(sakeRowHTML).join('');
+  document.getElementById('list-sake-list').innerHTML=sakes.map(sakeListItemHTML).join('');
 }
 
 // ============================================================
@@ -936,9 +1146,9 @@ function renderMembersScreen(){
     const isMe=m.id===currentUserId;
     return`<div class="mc-card">
       <div class="mc-header">
-        <div class="mc-avatar">${avatarSvg(m.avatar_id,44)}</div>
-        <div style="flex:1;"><div class="mc-name">${m.name}${isMe?' 👈 あなた':''}</div><span class="mc-badge">${title.title}</span></div>
-        ${isMe?`<button class="mc-del" onclick="deleteMember('${m.id}')">削除</button>`:''}
+        <div class="mc-avatar">${avatarSvg(m.avatar_id,42)}</div>
+        <div style="flex:1;"><div class="mc-name">${m.name}${isMe?' 👈':''}</div><span class="mc-badge">${title.title}</span></div>
+        ${isMe?`<button style="background:rgba(255,255,255,.1);border:none;color:#B89A70;font-size:10px;padding:3px 7px;border-radius:6px;cursor:pointer;" onclick="deleteMember('${m.id}')">削除</button>`:''}
       </div>
       <div class="mc-stats">
         <div class="mc-stat"><div class="mc-stat-num">${cnt}</div><div class="mc-stat-label">飲んだ本数</div></div>
@@ -961,8 +1171,7 @@ function renderStats(){
   const ar=drunk.filter(s=>getAvgRating(s.no)>0);
   const avg=ar.length?(ar.reduce((a,s)=>a+getAvgRating(s.no),0)/ar.length).toFixed(1):'-';
   document.getElementById('stats-grid-main').innerHTML=[
-    {num:drunk.length+'/130',label:'制覇銘柄数'},
-    {num:avg+'★',label:'全体平均評価'},
+    {num:drunk.length+'/130',label:'制覇銘柄数'},{num:avg+'★',label:'全体平均評価'},
     {num:SAKE_DATA.filter(s=>getCat(s.no)==='t1'&&getDrunkCount(s.no)>0).length+'/39',label:'モダン エレガント'},
     {num:SAKE_DATA.filter(s=>getCat(s.no)==='t2'&&getDrunkCount(s.no)>0).length+'/40',label:'モダン シック'},
     {num:SAKE_DATA.filter(s=>getCat(s.no)==='t3'&&getDrunkCount(s.no)>0).length+'/26',label:'クラシック リッチ'},
@@ -970,60 +1179,65 @@ function renderStats(){
   ].map(c=>`<div class="stat-card"><div class="stat-card-num">${c.num}</div><div class="stat-card-label">${c.label}</div></div>`).join('');
   const top=[...SAKE_DATA].filter(s=>getAvgRating(s.no)>0).sort((a,b)=>getAvgRating(b.no)-getAvgRating(a.no)).slice(0,8);
   document.getElementById('rank-list').innerHTML=top.length?top.map((s,i)=>`<div class="rank-row"><div class="rank-medal">${MEDALS[i]||i+1}</div><div class="rank-name">${s.name}</div><div class="rank-val">${starsHTML(getAvgRating(s.no))}</div></div>`).join(''):`<div class="rank-row"><div class="rank-name" style="color:#B89A70;">まだ評価がありません</div></div>`;
-  document.getElementById('member-rank-list').innerHTML=[...members].map(m=>({m,cnt:getMemberDrunkCount(m.id)})).sort((a,b)=>b.cnt-a.cnt).map((item,i)=>`<div class="rank-row"><div class="rank-medal">${MEDALS[i]||i+1}</div><div class="rank-name">${avatarSvg(item.m.avatar_id,20)} ${item.m.name}</div><div class="rank-cnt">${item.cnt}本</div></div>`).join('');
+  document.getElementById('member-rank-list').innerHTML=[...members].map(m=>({m,cnt:getMemberDrunkCount(m.id)})).sort((a,b)=>b.cnt-a.cnt).map((item,i)=>`<div class="rank-row"><div class="rank-medal">${MEDALS[i]||i+1}</div><div class="rank-name">${avatarSvg(item.m.avatar_id,18)} ${item.m.name}</div><div class="rank-cnt">${item.cnt}本</div></div>`).join('');
 }
 
 // ============================================================
-// Detail Modal
+// Quick Modal
 // ============================================================
-function openDetail(no){
+function openQuick(no){
   currentDetailNo=no;
   const s=SAKE_DATA.find(x=>x.no===no);
   const r=getRecord(no);
   const cat=getCat(no);
-  document.getElementById('d-num').textContent='No.'+String(no).padStart(3,'0');
-  document.getElementById('d-name').textContent=s.name;
-  const tb=document.getElementById('d-type');
-  tb.textContent=CAT_INFO[cat].label;
   const styles={t1:'background:#FFF0D9;color:#8B4A0E;',t2:'background:#F0EDF8;color:#534AB7;',t3:'background:#E8F5E9;color:#2A5C2A;',t4:'background:#E3F2FD;color:#185FA5;'};
-  tb.style.cssText=styles[cat];
+  const el=document.getElementById('qs-cat');
+  el.textContent=CAT_INFO[cat].label;el.className='qs-cat '+cat;
+  document.getElementById('qs-num').textContent='No.'+String(no).padStart(3,'0');
+  document.getElementById('qs-name').textContent=s.name;
+  document.getElementById('qs-pref').textContent='📍 '+s.pref+' — '+s.desc;
 
-  // 飲んだ確認：自分だけ操作可、他は参照のみ
-  document.getElementById('d-member-checks').innerHTML=members.map((m,i)=>{
-    const isMe=m.id===currentUserId;
+  // 自分の飲んだボタン
+  const myDrunk=r.checked[currentUserId]||false;
+  const btn=document.getElementById('qs-drunk-btn');
+  btn.className='drunk-big-btn '+(myDrunk?'yes':'no');
+  btn.innerHTML=myDrunk?'✓ 飲んだことある！':'まだ飲んでいない';
+
+  // 他のメンバー（参照のみ）
+  const others=members.filter(m=>m.id!==currentUserId);
+  document.getElementById('qs-other-members').innerHTML=others.map((m,i)=>{
     const drunk=r.checked[m.id]||false;
-    const toggle=isMe
-      ?`<button id="chk-${m.id}" class="mcr-toggle ${drunk?'yes':'no'}" onclick="toggleCheck('${m.id}')">${drunk?'✓ 飲んだ':'未飲'}</button>`
-      :`<span class="mcr-readonly">${drunk?'✓ 飲んだ':'未飲'}</span>`;
-    return`<div class="mcr-row">
-      <div class="mcr-av">${avatarSvg(m.avatar_id,28)}</div>
-      <div class="mcr-name">${m.name}${isMe?' 👈':''}</div>
-      ${toggle}
-    </div>`;
+    return`<div class="om-chip ${drunk?'drunk':'not-drunk'}">${avatarSvg(m.avatar_id,16)} ${m.name}：${drunk?'飲んだ':'未飲'}</div>`;
   }).join('');
 
-  document.getElementById('d-stars').innerHTML=[1,2,3,4,5].map(n=>`<button class="star-btn ${r.rating>=n?'lit':''}" onclick="setRating(${n})" id="star-${n}">★</button>`).join('');
-  document.getElementById('d-tags').innerHTML=TASTE_TAGS.map(t=>`<div class="tag-chip ${r.tags.includes(t)?'selected':''}" onclick="toggleTag('${t}',this)">${t}</div>`).join('');
-  document.getElementById('d-shop').value=r.shop||'';
-  document.getElementById('d-note').value=r.note||'';
+  // 評価
+  document.getElementById('qs-stars').innerHTML=[1,2,3,4,5].map(n=>`<button class="star-btn ${r.rating>=n?'lit':''}" onclick="setRating(${n})" id="qstar-${n}">★</button>`).join('');
+
+  // タグ・詳細
+  document.getElementById('qs-tags').innerHTML=TASTE_TAGS.map(t=>`<div class="tag-chip ${r.tags.includes(t)?'selected':''}" onclick="toggleTag('${t}',this)">${t}</div>`).join('');
+  document.getElementById('qs-shop').value=r.shop||'';
+  document.getElementById('qs-note').value=r.note||'';
+  document.getElementById('qs-detail-section').classList.remove('open');
+  document.getElementById('detail-toggle-btn').textContent='＋ メモ・タグを追加';
   document.getElementById('saving-msg').textContent='';
-  document.getElementById('detail-modal').classList.add('open');
+  document.getElementById('quick-modal').classList.add('open');
 }
 
-function closeDetail(){document.getElementById('detail-modal').classList.remove('open');}
+function closeQuick(){document.getElementById('quick-modal').classList.remove('open');}
 
-function toggleCheck(mid){
-  if(mid!==currentUserId)return; // 自分だけ変更可
+function toggleMyDrunk(){
   const r=getRecord(currentDetailNo);
-  r.checked[mid]=!r.checked[mid];
+  r.checked[currentUserId]=!(r.checked[currentUserId]||false);
   records[currentDetailNo]=r;
-  const btn=document.getElementById('chk-'+mid);
-  if(btn){btn.className='mcr-toggle '+(r.checked[mid]?'yes':'no');btn.textContent=r.checked[mid]?'✓ 飲んだ':'未飲';}
+  const myDrunk=r.checked[currentUserId];
+  const btn=document.getElementById('qs-drunk-btn');
+  btn.className='drunk-big-btn '+(myDrunk?'yes':'no');
+  btn.innerHTML=myDrunk?'✓ 飲んだことある！':'まだ飲んでいない';
 }
 
 function setRating(n){
   const r=getRecord(currentDetailNo);r.rating=r.rating===n?0:n;records[currentDetailNo]=r;
-  [1,2,3,4,5].forEach(i=>{const b=document.getElementById('star-'+i);if(b)b.className='star-btn '+(r.rating>=i?'lit':'');});
+  [1,2,3,4,5].forEach(i=>{const b=document.getElementById('qstar-'+i);if(b)b.className='star-btn '+(r.rating>=i?'lit':'');});
 }
 
 function toggleTag(t,el){
@@ -1033,17 +1247,31 @@ function toggleTag(t,el){
   records[currentDetailNo]=r;
 }
 
-async function saveDetail(){
+function toggleDetail(){
+  const sec=document.getElementById('qs-detail-section');
+  const btn=document.getElementById('detail-toggle-btn');
+  const open=sec.classList.toggle('open');
+  btn.textContent=open?'－ メモ・タグを閉じる':'＋ メモ・タグを追加';
+}
+
+async function saveQuick(){
   const r=getRecord(currentDetailNo);
-  r.shop=document.getElementById('d-shop').value;
-  r.note=document.getElementById('d-note').value;
+  r.shop=document.getElementById('qs-shop').value;
+  r.note=document.getElementById('qs-note').value;
   records[currentDetailNo]=r;
   const msg=document.getElementById('saving-msg');
   msg.textContent='保存中...';
-  await upsertRecord(currentDetailNo);
-  msg.textContent='✅ 保存しました！';
-  setTimeout(()=>{closeDetail();renderAll();},800);
+  const ok=await upsertRecord(currentDetailNo);
+  if(ok){
+    msg.textContent='✅ 保存しました！';
+    setTimeout(()=>{closeQuick();renderAll();},600);
+  }else{
+    msg.textContent='❌ 保存に失敗しました。再試行してください。';
+  }
 }
+
+// Modal swipe to close
+document.getElementById('quick-modal').addEventListener('click',function(e){if(e.target===this)closeQuick();});
 
 // ============================================================
 // Add / Delete Member
@@ -1055,52 +1283,89 @@ function openAddMember(){
   document.getElementById('add-member-modal').classList.add('open');
 }
 function closeAddMember(){document.getElementById('add-member-modal').classList.remove('open');}
-
 async function saveNewMember(){
   const name=document.getElementById('am-new-name').value.trim();
   if(!name){alert('名前を入力してください');return;}
-  showLoading('メンバーを追加中...');
   const id='m_'+Date.now();
   try{
-    await addMemberToDb({id,name,avatar_id:selectedAvatarId});
+    await sbFetch('members',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify({id,name,avatar_id:selectedAvatarId})});
     members.push({id,name,avatar_id:selectedAvatarId});
     closeAddMember();
     renderAll();
     renderMembersScreen();
+    showToast('メンバーを追加しました！');
   }catch(e){alert('追加エラー: '+e.message);}
-  hideLoading();
 }
-
 async function deleteMember(id){
   if(id!==currentUserId){alert('自分のアカウントしか削除できません');return;}
-  if(!confirm('自分のアカウントを削除しますか？この操作は取り消せません。'))return;
-  showLoading('削除中...');
+  if(!confirm('自分のアカウントを削除しますか？'))return;
   try{
-    await deleteMemberFromDb(id);
+    await sbFetch('records?member_id=eq.'+id,{method:'DELETE'});
+    await sbFetch('members?id=eq.'+id,{method:'DELETE'});
     members=members.filter(m=>m.id!==id);
+    clearUserId();
     currentUserId=null;
-    hideLoading();
     document.getElementById('app').style.display='none';
-    document.getElementById('user-select').classList.add('show');
     initUserSelect();
-  }catch(e){hideLoading();alert('削除エラー: '+e.message);}
+    document.getElementById('user-select').classList.add('show');
+  }catch(e){alert('削除エラー: '+e.message);}
 }
+document.getElementById('add-member-modal').addEventListener('click',function(e){if(e.target===this)closeAddMember();});
 
-document.getElementById('detail-modal').addEventListener('click',function(e){if(e.target===this)closeDetail();});
+// ============================================================
+// Pull to Refresh
+// ============================================================
+let ptStartY=0,ptPulling=false;
+const homeContent=document.getElementById('home-content');
+const ptrIndicator=document.getElementById('ptr-indicator');
+homeContent.addEventListener('touchstart',e=>{if(homeContent.scrollTop===0){ptStartY=e.touches[0].clientY;ptPulling=true;}},{passive:true});
+homeContent.addEventListener('touchmove',e=>{
+  if(!ptPulling)return;
+  const diff=e.touches[0].clientY-ptStartY;
+  if(diff>40){ptrIndicator.classList.add('show');ptrIndicator.textContent='✓ 離して更新';}
+},{passive:true});
+homeContent.addEventListener('touchend',async()=>{
+  if(ptPulling&&ptrIndicator.classList.contains('show')){
+    ptrIndicator.textContent='🔄 更新中...';
+    await loadAllData();
+    renderAll();
+    showToast('最新データに更新しました');
+  }
+  ptrIndicator.classList.remove('show');
+  ptPulling=false;
+});
 
 // ============================================================
 // Init
 // ============================================================
 async function init(){
+  // ユーザー名入力監視
+  setTimeout(()=>{
+    const inp=document.getElementById('us-new-name');
+    if(inp)inp.addEventListener('input',checkStartBtn);
+  },100);
+
   setTimeout(async()=>{
     document.getElementById('splash').classList.add('hide');
     setTimeout(async()=>{
       document.getElementById('splash').style.display='none';
-      showLoading('データを読み込み中...');
-      await loadAllData();
-      hideLoading();
-      initUserSelect();
-      document.getElementById('user-select').classList.add('show');
+      // DBからデータ読込
+      const ok=await loadAllData();
+      if(!ok){
+        showError();
+        return;
+      }
+      // 保存済みユーザーIDで自動ログイン
+      const savedId=loadUserId();
+      if(savedId&&members.find(m=>m.id===savedId)){
+        currentUserId=savedId;
+        document.getElementById('app').style.display='flex';
+        renderAll();
+        startRealtime();
+      }else{
+        initUserSelect();
+        document.getElementById('user-select').classList.add('show');
+      }
     },800);
   },2000);
 }
