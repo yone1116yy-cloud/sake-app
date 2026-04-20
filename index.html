@@ -928,26 +928,47 @@ function buildRecords(rRows){
 async function upsertRecord(no){
   const r=getRecord(no);
   try{
-    const res=await fetch(SB_URL+'/rest/v1/records',{
-      method:'POST',
-      mode:'cors',
-      credentials:'omit',
-      headers:{
-        'apikey':SB_KEY,
-        'Authorization':'Bearer '+SB_KEY,
-        'Content-Type':'application/json',
-        'Prefer':'resolution=merge-duplicates,return=minimal',
-      },
-      body:JSON.stringify({
-        sake_no:no,
-        member_id:currentUserId,
-        drunk:r.checked[currentUserId]||false,
-        rating:r.rating||0,
-        tags:(r.tags||[]).join(','),
-        shop:r.shop||'',
-        note:r.note||'',
-      })
-    });
+    // まず既存レコードを確認
+    const existing=await sbFetch('records?sake_no=eq.'+no+'&member_id=eq.'+currentUserId+'&select=id');
+    const payload={
+      sake_no:no,
+      member_id:currentUserId,
+      drunk:r.checked[currentUserId]||false,
+      rating:r.rating||0,
+      tags:(r.tags||[]).join(','),
+      shop:r.shop||'',
+      note:r.note||'',
+    };
+    let res;
+    if(existing && existing.length>0){
+      // UPDATE
+      res=await fetch(SB_URL+'/rest/v1/records?sake_no=eq.'+no+'&member_id=eq.'+currentUserId,{
+        method:'PATCH',
+        mode:'cors',
+        credentials:'omit',
+        headers:{
+          'apikey':SB_KEY,
+          'Authorization':'Bearer '+SB_KEY,
+          'Content-Type':'application/json',
+          'Prefer':'return=minimal',
+        },
+        body:JSON.stringify(payload)
+      });
+    }else{
+      // INSERT
+      res=await fetch(SB_URL+'/rest/v1/records',{
+        method:'POST',
+        mode:'cors',
+        credentials:'omit',
+        headers:{
+          'apikey':SB_KEY,
+          'Authorization':'Bearer '+SB_KEY,
+          'Content-Type':'application/json',
+          'Prefer':'return=minimal',
+        },
+        body:JSON.stringify(payload)
+      });
+    }
     if(!res.ok){const e=await res.text();throw new Error(res.status+': '+e);}
     setSyncStatus('ok','保存済み ✓');
     return true;
