@@ -298,6 +298,67 @@ input.name-input{width:100%;border:1px solid var(--border);border-radius:10px;pa
 #toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--brown);color:var(--gold3);padding:10px 20px;border-radius:20px;font-size:12px;font-weight:600;opacity:0;transition:opacity .3s;z-index:5000;pointer-events:none;white-space:nowrap;}
 #toast.show{opacity:1;}
 
+/* 全員制覇バッジ */
+.sake-card.all-clear{border:2px solid #C17F3B;box-shadow:0 0 0 2px rgba(193,127,59,.25);}
+.all-clear-badge{position:absolute;top:5px;right:5px;background:linear-gradient(135deg,#C17F3B,#F5D78A);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px;box-shadow:0 1px 4px rgba(0,0,0,.3);z-index:2;}
+
+/* 飲んだ一覧モーダル */
+#drunk-list-modal{display:none;position:fixed;inset:0;z-index:1000;background:rgba(44,26,14,.6);}
+#drunk-list-modal.open{display:flex;align-items:flex-end;justify-content:center;}
+.dl-sheet{background:var(--cream);border-radius:20px 20px 0 0;width:100%;max-width:540px;max-height:88vh;overflow-y:auto;padding:0 0 24px;}
+.dl-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:12px auto;}
+.dl-header{background:var(--brown2);padding:12px 18px;margin-top:6px;}
+.dl-name{font-size:16px;font-weight:700;color:var(--gold3);}
+.dl-sub{font-size:11px;color:var(--gold2);margin-top:2px;}
+.dl-body{padding:12px 16px;}
+.dl-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--cream3);}
+.dl-item:last-child{border-bottom:none;}
+.dl-no{font-size:9px;color:#B89A70;width:30px;flex-shrink:0;}
+.dl-info{flex:1;}
+.dl-sake-name{font-size:12px;font-weight:700;color:var(--brown);}
+.dl-sake-sub{font-size:9px;color:#B89A70;margin-top:1px;}
+.dl-rating{font-size:11px;color:var(--gold);}
+
+/* 称号表モーダル */
+#title-table-modal{display:none;position:fixed;inset:0;z-index:1000;background:rgba(44,26,14,.6);}
+#title-table-modal.open{display:flex;align-items:flex-end;justify-content:center;}
+.tt-sheet{background:var(--cream);border-radius:20px 20px 0 0;width:100%;max-width:540px;max-height:88vh;overflow-y:auto;padding:0 0 24px;}
+.tt-row{display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid var(--cream3);}
+.tt-row:last-child{border-bottom:none;}
+.tt-range{font-size:10px;color:#B89A70;width:60px;flex-shrink:0;}
+.tt-title{font-size:12px;font-weight:700;color:var(--brown);flex:1;}
+.tt-comment{font-size:9px;color:#B89A70;}
+.tt-mystery{font-size:18px;letter-spacing:3px;color:var(--gold);}
+
+/* お店モーダル */
+#shop-modal{display:none;position:fixed;inset:0;z-index:1000;background:rgba(44,26,14,.6);}
+#shop-modal.open{display:flex;align-items:flex-end;justify-content:center;}
+.shop-sheet{background:var(--cream);border-radius:20px 20px 0 0;width:100%;max-width:540px;max-height:88vh;overflow-y:auto;padding:0 0 24px;}
+.shop-item{background:#fff;border:1px solid var(--border);border-radius:12px;margin:0 14px 8px;padding:12px 14px;}
+.shop-item-name{font-size:13px;font-weight:700;color:var(--brown);margin-bottom:3px;}
+.shop-item-meta{font-size:10px;color:#B89A70;}
+.shop-item-actions{display:flex;gap:8px;margin-top:8px;}
+.shop-map-btn{background:var(--brown);color:var(--gold3);border:none;border-radius:8px;padding:5px 12px;font-size:11px;cursor:pointer;}
+.shop-del-btn{background:var(--cream3);color:#B89A70;border:none;border-radius:8px;padding:5px 10px;font-size:11px;cursor:pointer;}
+.shop-add-form{padding:0 14px;margin-top:4px;}
+.shop-add-input{width:100%;border:1px solid var(--border);border-radius:10px;padding:8px 12px;font-size:13px;background:#fff;font-family:inherit;outline:none;margin-bottom:8px;}
+.shop-add-btn{width:100%;background:var(--brown);color:var(--gold3);border:none;border-radius:10px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;}
+
+/* 地図 */
+#map-modal{display:none;position:fixed;inset:0;z-index:1000;background:rgba(44,26,14,.6);}
+#map-modal.open{display:flex;align-items:flex-end;justify-content:center;}
+.map-sheet{background:var(--cream);border-radius:20px 20px 0 0;width:100%;max-width:600px;max-height:92vh;overflow-y:auto;padding:0 0 24px;}
+.map-header{background:var(--brown);padding:12px 18px;margin-top:10px;display:flex;align-items:center;justify-content:space-between;}
+.map-title{font-size:15px;font-weight:700;color:var(--gold3);}
+.map-filter{display:flex;gap:6px;padding:10px 14px;flex-wrap:wrap;}
+.map-filter-btn{border:1px solid var(--border);background:#fff;border-radius:16px;font-size:10px;color:var(--brown3);padding:4px 10px;cursor:pointer;}
+.map-filter-btn.active{background:var(--brown);color:var(--gold3);border-color:var(--brown);}
+.map-legend{display:flex;gap:12px;padding:0 14px 8px;flex-wrap:wrap;font-size:10px;color:#B89A70;}
+.map-legend-item{display:flex;align-items:center;gap:4px;}
+.map-pref-list{padding:0 14px;}
+.map-pref-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--cream3);}
+.map-pref-row:last-child{border-bottom:none;}
+
 /* Party screen */
 .party-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;}
 .party-start-btn{background:var(--brown);color:var(--gold3);border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;}
@@ -484,6 +545,7 @@ input.name-input{width:100%;border:1px solid var(--border);border-radius:10px;pa
       <!-- STATS -->
       <div id="screen-stats" class="screen">
         <div class="stats-content">
+          <button onclick="openMapModal()" style="width:100%;background:var(--brown);color:var(--gold3);border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px;">🗾 蔵元マップを見る</button>
           <div class="stats-grid-main" id="stats-grid-main"></div>
           <div style="font-size:11px;font-weight:700;color:var(--brown);margin-bottom:7px;">🏆 高評価ランキング</div>
           <div class="rank-list" id="rank-list"></div>
@@ -634,6 +696,87 @@ input.name-input{width:100%;border:1px solid var(--border);border-radius:10px;pa
   </div>
 </div>
 
+<!-- 飲んだ一覧モーダル -->
+<div id="drunk-list-modal">
+  <div class="dl-sheet">
+    <div class="dl-handle"></div>
+    <div class="dl-header">
+      <div class="dl-name" id="dl-member-name"></div>
+      <div class="dl-sub" id="dl-member-sub"></div>
+    </div>
+    <div class="dl-body" id="dl-body"></div>
+    <div style="padding:0 16px;margin-top:4px;">
+      <button style="width:100%;background:var(--cream3);color:var(--brown3);border:none;border-radius:12px;padding:10px;font-size:13px;cursor:pointer;" onclick="document.getElementById('drunk-list-modal').classList.remove('open')">閉じる</button>
+    </div>
+  </div>
+</div>
+
+<!-- 称号表モーダル -->
+<div id="title-table-modal">
+  <div class="tt-sheet">
+    <div class="dl-handle"></div>
+    <div class="dl-header">
+      <div class="dl-name">🏆 称号一覧</div>
+      <div class="dl-sub">何本飲んだら称号が変わる？　※TOP4は飲んでからのお楽しみ😄</div>
+    </div>
+    <div id="tt-body" style="padding:8px 0;"></div>
+    <div style="padding:0 16px;margin-top:4px;">
+      <button style="width:100%;background:var(--cream3);color:var(--brown3);border:none;border-radius:12px;padding:10px;font-size:13px;cursor:pointer;" onclick="document.getElementById('title-table-modal').classList.remove('open')">閉じる</button>
+    </div>
+  </div>
+</div>
+
+<!-- お店モーダル -->
+<div id="shop-modal">
+  <div class="shop-sheet">
+    <div class="dl-handle"></div>
+    <div class="dl-header">
+      <div class="dl-name">🏪 行きたい・行ったお店</div>
+      <div class="dl-sub">日本酒が飲めるお店を記録しよう</div>
+    </div>
+    <div style="padding:10px 14px 6px;">
+      <div style="display:flex;gap:6px;margin-bottom:10px;">
+        <button class="map-filter-btn active" id="shop-tab-visited" onclick="switchShopTab('visited',this)">✅ 行ったお店</button>
+        <button class="map-filter-btn" id="shop-tab-want" onclick="switchShopTab('want',this)">📌 行きたいお店</button>
+      </div>
+    </div>
+    <div id="shop-list" style="min-height:80px;"></div>
+    <div class="shop-add-form">
+      <div style="font-size:10px;font-weight:700;color:var(--brown3);margin-bottom:6px;" id="shop-add-label">＋ 行ったお店を追加</div>
+      <input class="shop-add-input" id="shop-name-input" placeholder="お店の名前（例：酒処 銘柄）">
+      <input class="shop-add-input" id="shop-memo-input" placeholder="メモ（例：駅から徒歩3分）">
+      <button class="shop-add-btn" onclick="addShop()">追加する</button>
+    </div>
+    <div style="padding:8px 14px 0;">
+      <button style="width:100%;background:var(--cream3);color:var(--brown3);border:none;border-radius:12px;padding:10px;font-size:13px;cursor:pointer;" onclick="document.getElementById('shop-modal').classList.remove('open')">閉じる</button>
+    </div>
+  </div>
+</div>
+
+<!-- 蔵元マップモーダル -->
+<div id="map-modal">
+  <div class="map-sheet">
+    <div class="dl-handle"></div>
+    <div class="map-header">
+      <div class="map-title">🗾 蔵元マップ</div>
+      <button style="background:rgba(245,230,200,.15);border:none;color:var(--gold3);font-size:11px;padding:4px 10px;border-radius:6px;cursor:pointer;" onclick="document.getElementById('map-modal').classList.remove('open')">閉じる</button>
+    </div>
+    <div class="map-filter">
+      <button class="map-filter-btn active" onclick="setMapFilter('all',this)">全員</button>
+      <div id="map-member-filters" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+    </div>
+    <div style="padding:0 14px;margin-bottom:8px;">
+      <div id="map-stats" style="font-size:11px;color:var(--brown3);"></div>
+    </div>
+    <div class="map-legend">
+      <div class="map-legend-item"><div style="width:14px;height:14px;background:#C17F3B;border-radius:3px;"></div> 飲んだことある</div>
+      <div class="map-legend-item"><div style="width:14px;height:14px;background:#E8D5B5;border-radius:3px;border:1px solid #D4B896;"></div> まだ未挑戦</div>
+    </div>
+    <div style="padding:0 14px;" id="map-svg-container"></div>
+    <div class="map-pref-list" id="map-pref-list"></div>
+  </div>
+</div>
+
 <!-- Toast -->
 <div id="toast"></div>
 
@@ -680,9 +823,12 @@ const TITLES=[
   {min:40,max:49,title:'🌾 蔵人',comment:'本気で日本酒と向き合っている'},
   {min:50,max:64,title:'⚗️ 杜氏見習い',comment:'折り返し地点が見えてきた'},
   {min:65,max:79,title:'🔥 杜氏',comment:'折り返し！折り返し！'},
-  {min:80,max:99,title:'🦅 酒仙',comment:'もはや域に達しつつある'},
-  {min:100,max:129,title:'👑 伝説の酒仙',comment:'あと少し…！ラストスパート'},
-  {min:130,max:130,title:'🍶✨ 日本酒の神',comment:'全130銘柄 完全制覇！！'},
+  {min:80,max:89,title:'🦅 酒仙',comment:'もはや域に達しつつある'},
+  {min:90,max:99,title:'🌕 月下の酒仙',comment:'月明かりの下で杯を傾ける境地'},
+  {min:100,max:109,title:'？？？',comment:'その先は…誰も知らない'},
+  {min:110,max:119,title:'？？？',comment:'伝説の扉が見えてきた'},
+  {min:120,max:129,title:'？？？',comment:'あと少し…もはや人の域を超えている'},
+  {min:130,max:130,title:'？？？',comment:'全130銘柄 完全制覇 — 称号は飲んでからのお楽しみ😄'},
 ];
 const getTitle=n=>TITLES.find(t=>n>=t.min&&n<=t.max)||TITLES[TITLES.length-1];
 
@@ -1192,8 +1338,10 @@ function renderRightPanel(){
 function sakeCardHTML(s){
   const r=getRecord(s.no);const cat=getCat(s.no);
   const checks=members.map((m,i)=>`<div class="sc-dot" style="background:${r.checked[m.id]?getMemberColor(i):'#E8D5B5'};"></div>`).join('');
+  const allClear=members.length>0&&members.every(m=>r.checked[m.id]);
   const imgSection=`<div class="sake-card-noimg"><div class="sc-desc">${s.desc}</div></div>`;
-  return`<div class="sake-card" onclick="openQuick(${s.no})">
+  return`<div class="sake-card${allClear?' all-clear':''}" onclick="openQuick(${s.no})" style="position:relative;">
+    ${allClear?'<div class="all-clear-badge">👑</div>':''}
     ${imgSection}
     <div class="sake-card-info">
       <span class="sc-cat ${cat}">${CAT_INFO[cat].label}</span>
@@ -1283,7 +1431,7 @@ function renderMembersScreen(){
           </div>`:''}
       </div>
       <div class="mc-stats">
-        <div class="mc-stat"><div class="mc-stat-num">${cnt}</div><div class="mc-stat-label">飲んだ本数</div></div>
+        <div class="mc-stat" onclick="openDrunkList('${m.id}')" style="cursor:pointer;"><div class="mc-stat-num" style="color:var(--gold);">${cnt}</div><div class="mc-stat-label">飲んだ本数 👆</div></div>
         <div class="mc-stat"><div class="mc-stat-num">${avg}</div><div class="mc-stat-label">平均評価</div></div>
         <div class="mc-stat"><div class="mc-stat-num">${fav}</div><div class="mc-stat-label">★4以上</div></div>
       </div>
@@ -1292,7 +1440,11 @@ function renderMembersScreen(){
         <div class="mc-prog-bar"><div class="mc-prog-fill" style="width:${pct}%;"></div></div>
       </div>
     </div>`;
-  }).join('')+`<button class="add-member-btn" onclick="openAddMember()">＋ メンバーを追加</button>`;
+  }).join('')+`<div style="display:flex;gap:8px;margin-bottom:10px;">
+    <button onclick="openTitleTable()" style="flex:1;border:1px solid var(--gold);background:var(--cream2);border-radius:12px;padding:12px;font-size:12px;color:var(--brown);cursor:pointer;font-weight:700;">🏆 称号一覧を見る</button>
+    <button onclick="openShopModal()" style="flex:1;border:1px solid var(--border);background:#fff;border-radius:12px;padding:12px;font-size:12px;color:var(--brown);cursor:pointer;font-weight:700;">🏪 お店を記録する</button>
+  </div>
+  <button class="add-member-btn" onclick="openAddMember()">＋ メンバーを追加</button>`;
 }
 
 // ============================================================
@@ -1464,6 +1616,217 @@ async function deleteMember(id){
 document.getElementById('add-member-modal').addEventListener('click',function(e){if(e.target===this)closeAddMember();});
 
 // ============================================================
+// ============================================================
+// ① 飲んだ一覧モーダル
+// ============================================================
+function openDrunkList(memberId){
+  const m=members.find(x=>x.id===memberId);
+  if(!m)return;
+  const drunkSakes=SAKE_DATA.filter(s=>getRecord(s.no).checked[memberId]);
+  const cnt=drunkSakes.length;
+  const title=getTitle(cnt);
+  document.getElementById('dl-member-name').innerHTML=`${avatarSvg(m.avatar_id,22)} ${m.name} さんの飲んだ記録`;
+  document.getElementById('dl-member-sub').textContent=`${cnt}本 ／ ${title.title}`;
+  if(drunkSakes.length===0){
+    document.getElementById('dl-body').innerHTML=`<div style="text-align:center;padding:32px;color:#B89A70;font-size:13px;">まだ記録がありません🍶</div>`;
+  }else{
+    document.getElementById('dl-body').innerHTML=drunkSakes.map(s=>{
+      const r=getRecord(s.no);
+      const cat=getCat(s.no);
+      return`<div class="dl-item">
+        <div class="dl-no">No.${String(s.no).padStart(3,'0')}</div>
+        <div class="dl-info">
+          <div class="dl-sake-name">${s.name}</div>
+          <div class="dl-sake-sub"><span class="sc-cat ${cat}" style="font-size:7px;padding:1px 4px;">${CAT_INFO[cat].label}</span> 📍${s.pref}</div>
+        </div>
+        <div class="dl-rating">${r.rating?starsHTML(r.rating):'<span style="color:#D4B896;">未評価</span>'}</div>
+      </div>`;
+    }).join('');
+  }
+  document.getElementById('drunk-list-modal').classList.add('open');
+}
+document.getElementById('drunk-list-modal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
+
+// ============================================================
+// ③ 称号表モーダル
+// ============================================================
+function openTitleTable(){
+  const tbody=document.getElementById('tt-body');
+  tbody.innerHTML=TITLES.map((t,i)=>{
+    const isMystery=t.title==='？？？';
+    const rangeText=t.min===t.max?`${t.min}本`:`${t.min}〜${t.max}本`;
+    // 現在のメンバーがこの称号かチェック
+    const me=members.find(m=>m.id===currentUserId);
+    const myCnt=me?getMemberDrunkCount(me.id):0;
+    const isMyTitle=myCnt>=t.min&&myCnt<=t.max;
+    return`<div class="tt-row" style="${isMyTitle?'background:var(--cream2);':''}">
+      <div class="tt-range">${rangeText}</div>
+      ${isMystery
+        ?`<div class="tt-title"><span class="tt-mystery">？？？</span></div><div class="tt-comment" style="font-size:8px;color:#C17F3B;">飲んで確かめよう！</div>`
+        :`<div class="tt-title">${t.title}${isMyTitle?' ← 今ここ！':''}</div><div class="tt-comment">${t.comment}</div>`
+      }
+    </div>`;
+  }).join('');
+  document.getElementById('title-table-modal').classList.add('open');
+}
+document.getElementById('title-table-modal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
+
+// ============================================================
+// E. お店機能
+// ============================================================
+let shopTab='visited';
+let shops=[];
+
+async function loadShops(){
+  try{
+    const rows=await sbFetch('shops?select=*&order=created_at.desc');
+    shops=rows;
+  }catch(e){
+    // shopsテーブルがなければ空で続行
+    shops=[];
+  }
+}
+
+async function openShopModal(){
+  await loadShops();
+  renderShopList();
+  document.getElementById('shop-modal').classList.add('open');
+}
+
+function switchShopTab(tab,btn){
+  shopTab=tab;
+  document.querySelectorAll('#shop-modal .map-filter-btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  document.getElementById('shop-add-label').textContent=tab==='visited'?'＋ 行ったお店を追加':'＋ 行きたいお店を追加';
+  renderShopList();
+}
+
+function renderShopList(){
+  const filtered=shops.filter(s=>s.type===shopTab);
+  const el=document.getElementById('shop-list');
+  if(filtered.length===0){
+    el.innerHTML=`<div style="text-align:center;padding:24px;color:#B89A70;font-size:12px;">${shopTab==='visited'?'まだ記録がありません。飲みに行ったら追加しよう！':'行きたいお店を追加しよう！'}</div>`;
+    return;
+  }
+  el.innerHTML=filtered.map(s=>`
+    <div class="shop-item">
+      <div class="shop-item-name">${s.name}</div>
+      <div class="shop-item-meta">${s.memo||''} ${s.created_by===currentUserId?'· 自分が追加':''}</div>
+      <div class="shop-item-actions">
+        <button class="shop-map-btn" onclick="openGoogleMap('${s.name.replace(/'/g,"\'")}')">🗺️ Google Mapsで開く</button>
+        ${s.created_by===currentUserId?`<button class="shop-del-btn" onclick="deleteShop(${s.id})">削除</button>`:''}
+      </div>
+    </div>`).join('');
+}
+
+function openGoogleMap(name){
+  window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name+' 日本酒')}`, '_blank');
+}
+
+async function addShop(){
+  const name=document.getElementById('shop-name-input').value.trim();
+  const memo=document.getElementById('shop-memo-input').value.trim();
+  if(!name){showToast('お店の名前を入力してください');return;}
+  try{
+    await sbFetch('shops',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify({
+      name,memo,type:shopTab,created_by:currentUserId
+    })});
+    document.getElementById('shop-name-input').value='';
+    document.getElementById('shop-memo-input').value='';
+    await loadShops();
+    renderShopList();
+    showToast('🏪 お店を追加しました！');
+  }catch(e){
+    showToast('❌ 追加失敗: shopsテーブルを作成してください');
+  }
+}
+
+async function deleteShop(id){
+  if(!confirm('このお店を削除しますか？'))return;
+  try{
+    await sbFetch('shops?id=eq.'+id,{method:'DELETE',headers:{'Prefer':'return=minimal'}});
+    await loadShops();
+    renderShopList();
+  }catch(e){showToast('削除に失敗しました');}
+}
+document.getElementById('shop-modal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
+
+// ============================================================
+// D. 蔵元マップ
+// ============================================================
+let mapFilter='all';
+
+// 都道府県と銘柄の対応（産地から自動生成）
+function getPrefMap(){
+  const prefMap={};
+  SAKE_DATA.forEach(s=>{
+    if(!prefMap[s.pref])prefMap[s.pref]=[];
+    prefMap[s.pref].push(s.no);
+  });
+  return prefMap;
+}
+
+// フィルター対象メンバーのチェック済み銘柄番号セット
+function getCheckedNosForFilter(){
+  if(mapFilter==='all'){
+    // 全員が飲んだことあるもの
+    const nos=new Set();
+    SAKE_DATA.forEach(s=>{
+      if(members.some(m=>getRecord(s.no).checked[m.id]))nos.add(s.no);
+    });
+    return nos;
+  }else{
+    const nos=new Set();
+    SAKE_DATA.forEach(s=>{
+      if(getRecord(s.no).checked[mapFilter])nos.add(s.no);
+    });
+    return nos;
+  }
+}
+
+function setMapFilter(f,btn){
+  mapFilter=f;
+  document.querySelectorAll('#map-modal .map-filter-btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  renderMap();
+}
+
+function openMapModal(){
+  // メンバーフィルターボタン生成
+  document.getElementById('map-member-filters').innerHTML=members.map(m=>`
+    <button class="map-filter-btn" onclick="setMapFilter('${m.id}',this)">${m.name}</button>`).join('');
+  renderMap();
+  document.getElementById('map-modal').classList.add('open');
+}
+
+function renderMap(){
+  const prefMap=getPrefMap();
+  const checkedNos=getCheckedNosForFilter();
+  // 制覇済み都道府県
+  const clearedPrefs=new Set();
+  Object.entries(prefMap).forEach(([pref,nos])=>{
+    if(nos.some(no=>checkedNos.has(no)))clearedPrefs.add(pref);
+  });
+  const totalPrefs=Object.keys(prefMap).length;
+  const memberName=mapFilter==='all'?'みんなで':members.find(m=>m.id===mapFilter)?.name+'さんが';
+  document.getElementById('map-stats').innerHTML=
+    `${memberName} <strong style="color:var(--brown);font-size:14px;">${clearedPrefs.size}</strong> / ${totalPrefs} 都道府県を制覇！`;
+
+  // 都道府県リスト表示
+  const allPrefs=Object.keys(prefMap).sort();
+  document.getElementById('map-pref-list').innerHTML=allPrefs.map(pref=>{
+    const nos=prefMap[pref];
+    const cleared=nos.some(no=>checkedNos.has(no));
+    const clearedNos=nos.filter(no=>checkedNos.has(no));
+    return`<div class="map-pref-row">
+      <div style="width:12px;height:12px;border-radius:3px;background:${cleared?'#C17F3B':'#E8D5B5'};flex-shrink:0;${cleared?'box-shadow:0 0 0 1px rgba(193,127,59,.4);':''}"></div>
+      <div style="font-size:11px;font-weight:${cleared?'700':'400'};color:${cleared?'var(--brown)':'#B89A70'};flex:1;">${pref}</div>
+      <div style="font-size:9px;color:#B89A70;">${clearedNos.length}/${nos.length}銘柄</div>
+    </div>`;
+  }).join('');
+}
+document.getElementById('map-modal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
+
 // ============================================================
 // 飲み会モード
 // ============================================================
