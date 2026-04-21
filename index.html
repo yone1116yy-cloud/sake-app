@@ -1074,12 +1074,8 @@ function buildRecords(rRows){
 async function upsertRecord(no){
   const r=getRecord(no);
   const isDrunk=r.checked[currentUserId]||false;
-  const hasRating=(r.rating||0)>0;
-  const hasTags=(r.tags||[]).length>0;
-  const hasNote=(r.note||'').trim()!=='';
-  const hasShop=(r.shop||'').trim()!=='';
-  // C案：drunk=false かつ 評価・タグ・メモ・お店が全て空 → 物理削除
-  const shouldDelete=!isDrunk&&!hasRating&&!hasTags&&!hasNote&&!hasShop;
+  // drunk=false になったら無条件で物理削除
+  const shouldDelete=!isDrunk;
   try{
     const existing=await sbFetch('records?sake_no=eq.'+no+'&member_id=eq.'+currentUserId+'&select=id');
     const hasExisting=existing&&existing.length>0;
