@@ -1073,20 +1073,45 @@ function buildRecords(rRows){
 
 async function upsertRecord(no){
   const r=getRecord(no);
+  const isDrunk=r.checked[currentUserId]||false;
+  const hasRating=(r.rating||0)>0;
+  const hasTags=(r.tags||[]).length>0;
+  const hasNote=(r.note||'').trim()!=='';
+  const hasShop=(r.shop||'').trim()!=='';
+  // C案：drunk=false かつ 評価・タグ・メモ・お店が全て空 → 物理削除
+  const shouldDelete=!isDrunk&&!hasRating&&!hasTags&&!hasNote&&!hasShop;
   try{
-    // まず既存レコードを確認
     const existing=await sbFetch('records?sake_no=eq.'+no+'&member_id=eq.'+currentUserId+'&select=id');
+    const hasExisting=existing&&existing.length>0;
+    if(shouldDelete){
+      // 物理削除（存在する場合のみ）
+      if(hasExisting){
+        const res=await fetch(SB_URL+'/rest/v1/records?sake_no=eq.'+no+'&member_id=eq.'+currentUserId,{
+          method:'DELETE',
+          mode:'cors',
+          credentials:'omit',
+          headers:{
+            'apikey':SB_KEY,
+            'Authorization':'Bearer '+SB_KEY,
+            'Prefer':'return=minimal',
+          },
+        });
+        if(!res.ok){const e=await res.text();throw new Error(res.status+': '+e);}
+      }
+      setSyncStatus('ok','解除しました');
+      return true;
+    }
     const payload={
       sake_no:no,
       member_id:currentUserId,
-      drunk:r.checked[currentUserId]||false,
+      drunk:isDrunk,
       rating:r.rating||0,
       tags:(r.tags||[]).join(','),
       shop:r.shop||'',
       note:r.note||'',
     };
     let res;
-    if(existing && existing.length>0){
+    if(hasExisting){
       // UPDATE
       res=await fetch(SB_URL+'/rest/v1/records?sake_no=eq.'+no+'&member_id=eq.'+currentUserId,{
         method:'PATCH',
